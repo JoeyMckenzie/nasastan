@@ -1,0 +1,109 @@
+parameters:
+    nasastan:
+        assertionDensity: 0.02
+        minAssertions: 2
+        functionSizeLimit: 60
+        initMethods:
+            - __construct
+            - initialize
+            - init
+            - setup
+            - boot
+            - register
+        ignoredFunctions:
+            - array_push
+            - array_unshift
+            - session_start
+            - header
+            - setcookie
+            - error_log
+            - trigger_error
+            # Add any custom functions here
+        allowFluentInterfaces: true
+
+parametersSchema:
+    nasastan: structure([
+        assertionDensity: schema(float(), nullable())
+        minAssertions: schema(int(), nullable())
+        functionSizeLimit: schema(int(), nullable())
+        initMethods: listOf(string())
+        ignoredFunctions: listOf(string())
+        allowFluentInterfaces: schema(bool(), nullable())
+    ])
+
+services:
+    -
+        class: Nasastan\NasastanConfiguration
+        arguments:
+            assertionDensity: %nasastan.assertionDensity%
+            minAssertions: %nasastan.minAssertions%
+            functionSizeLimit: %nasastan.functionSizeLimit%
+            initMethods: %nasastan.initMethods%
+            ignoredFunctions: %nasastan.ignoredFunctions%
+            allowFluentInterfaces: %nasastan.allowFluentInterfaces%
+
+    -
+        class: Nasastan\NasastanExtension
+        tags:
+            - phpstan.rules.rule
+
+    # If you still want to register individual rules that can be selectively enabled/disabled
+    -
+        class: Nasastan\Rules\NoComplexFlowConstructsRule
+        tags:
+            - phpstan.rules.rule
+
+    -
+        class: Nasastan\Rules\NoRecursionRule
+        tags:
+            - phpstan.rules.rule
+
+    -
+        class: Nasastan\Rules\FixedLoopBoundsRule
+        tags:
+            - phpstan.rules.rule
+
+    -
+        class: Nasastan\Rules\NoDynamicMemoryAllocationRule
+        arguments:
+            initMethods: %nasastan.initMethods%
+        tags:
+            - phpstan.rules.rule
+
+    -
+        class: Nasastan\Rules\FunctionSizeRule
+        arguments:
+            maxLines: %nasastan.functionSizeLimit%
+        tags:
+            - phpstan.rules.rule
+
+    -
+        class: Nasastan\Rules\AssertionDensityRule
+        arguments:
+            minDensity: %nasastan.assertionDensity%
+            minAssertions: %nasastan.minAssertions%
+        tags:
+            - phpstan.rules.rule
+
+    -
+        class: Nasastan\Rules\VariableScopeRule
+        tags:
+            - phpstan.rules.rule
+
+    -
+        class: Nasastan\Rules\CheckReturnValueRule
+        tags:
+            - phpstan.rules.rule
+
+    -
+        class: Nasastan\Rules\StrictTypesRule
+        tags:
+            - phpstan.rules.rule
+
+    -
+        class: Nasastan\Rules\CheckReturnValueRule
+        arguments:
+            ignoredFunctions: %nasastan.ignoredFunctions%
+            allowFluentInterfaces: %nasastan.allowFluentInterfaces%
+        tags:
+            - phpstan.rules.rule

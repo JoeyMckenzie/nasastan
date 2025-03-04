@@ -1,0 +1,41 @@
+{
+    "name": "joeymckenzie/nasastan",
+    "description": "A PHPStan plugin to enforce NASA's Power of Ten rules.",
+    "type": "library",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Nasastan\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Joey McKenzie",
+            "email": "joey.mckenzie27@gmail.com"
+        }
+    ],
+    "minimum-stability": "stable",
+    "require": {
+        "php": "^8.4"
+    },
+    "require-dev": {
+        "laravel/pint": "^1.19",
+        "phpstan/phpstan": "^2.1",
+        "phpstan/phpstan-strict-rules": "^2.0",
+        "phpstan/phpstan-deprecation-rules": "^2.0",
+        "phpstan/phpstan-phpunit": "^2.0",
+        "phpstan/extension-installer": "^1.4",
+        "rector/rector": "^2.0",
+        "phpunit/phpunit": "^12.0"
+    },
+    "config": {
+        "allow-plugins": {
+            "phpstan/extension-installer": true
+        }
+    }
+}
