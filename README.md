@@ -25,44 +25,6 @@ includes:
   - vendor/joeymckenzie/nasastan/extension.neon
 ```
 
-## Configuration
-
-You can configure the rules in your `phpstan.neon` file:
-
-```yaml
-parameters:
-  nasastan:
-    assertionDensity: 0.02
-    minAssertions: 2
-    functionSizeLimit: 60
-    initMethods:
-      - __construct
-      - initialize
-      - init
-      - setup
-      - boot
-      - register
-    ignoredFunctions:
-      - array_push
-      - array_unshift
-      - session_start
-      - header
-      - setcookie
-      - error_log
-      - trigger_error
-    allowFluentInterfaces: true 
-```
-
-### Configuration Options
-
-| Option              | Default                                                                                                 | Description                                               |
-|---------------------|---------------------------------------------------------------------------------------------------------|-----------------------------------------------------------|
-| `assertionDensity`  | `0.02` (2%)                                                                                             | Minimum ratio of assertions to lines of code              |
-| `minAssertions`     | `2`                                                                                                     | Minimum number of assertions per method                   |
-| `functionSizeLimit` | `60`                                                                                                    | Maximum function size in lines                            |
-| `initMethods`       | `['__construct', 'initialize', 'init', 'setup', 'boot', 'register']`                                    | Methods where object creation is allowed                  |
-| `ignoredFunctions`  | `['array_push', 'array_unshift', 'session_start', 'header', 'setcookie', 'error_log', 'trigger_error']` | Methods where return type should not be checked (Rule #8) |
-
 ## Rules
 
 This package implements the following rules inspired by NASA's Power of Ten:
