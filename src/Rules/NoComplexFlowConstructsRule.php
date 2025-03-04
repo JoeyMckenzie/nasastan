@@ -37,10 +37,11 @@ final class NoComplexFlowConstructsRule implements NasastanRule
                     ->build(),
             ];
         }
+
         // Check for direct recursion in function calls
         if ($node instanceof FuncCall && $node->name instanceof Name) {
             $functionName = $node->name->toString();
-            $currentFunction = $this->getCurrentFunctionName($scope);
+            $currentFunction = $scope->getFunctionName();
 
             // Get the short name of the current function (without namespace)
             $currentFunctionShortName = $currentFunction;
@@ -56,6 +57,7 @@ final class NoComplexFlowConstructsRule implements NasastanRule
                 ];
             }
         }
+
         // Check for direct recursion in method calls
         if ($node instanceof Node\Expr\MethodCall) {
             $methodName = $node->name->name ?? null;
@@ -76,6 +78,7 @@ final class NoComplexFlowConstructsRule implements NasastanRule
                 ];
             }
         }
+
         // Check for direct recursion in static method calls
         if ($node instanceof StaticCall && $node->name instanceof Node\Identifier) {
             $methodName = $node->name->name;
@@ -115,13 +118,5 @@ final class NoComplexFlowConstructsRule implements NasastanRule
     public function getRuleDescriptor(): string
     {
         return 'Avoid complex flow constructs, such as goto and recursion.';
-    }
-
-    /**
-     * Get the current function name from the scope
-     */
-    private function getCurrentFunctionName(Scope $scope): ?string
-    {
-        return $scope->getFunctionName();
     }
 }
