@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tests\Rules\NoComplexFlowConstructs\Examples;
+namespace Tests\Examples;
 
 /**
  * Sample class containing a recursive method that should trigger the rule.

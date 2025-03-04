@@ -12,10 +12,10 @@ use Throwable;
  */
 final class NasastanException extends Exception
 {
-    public function __construct(string $ruleDescriptor, ?Throwable $previous = null)
+    public function __construct(string $ruleName, ?Throwable $previous = null)
     {
         parent::__construct(
-            "An error occurred while processing rule $ruleDescriptor",
+            "An error occurred while processing rule $ruleName",
             0,
             $previous
         );

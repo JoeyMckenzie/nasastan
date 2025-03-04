@@ -5,34 +5,25 @@ declare(strict_types=1);
 namespace Nasastan\Rules;
 
 use Nasastan\NasastanException;
+use Nasastan\NasastanRule;
+use Nasastan\Rules\Concerns\HasNodeClassType;
 use PhpParser\Node;
 use PhpParser\Node\Expr\FuncCall;
 use PhpParser\Node\Expr\StaticCall;
 use PhpParser\Node\Name;
 use PHPStan\Analyser\Scope;
+use PHPStan\Reflection\ClassReflection;
 use PHPStan\Rules\Rule;
 use PHPStan\Rules\RuleErrorBuilder;
 
 /**
  * Rule #1: No complex flow constructs. This rule detects use of goto statements and recursion.
+ *
+ * @implements NasastanRule<Node>
  */
-final class NoComplexFlowConstructsRule implements Rule
+final class NoComplexFlowConstructsRule implements NasastanRule
 {
-    public function getRuleName(): string
-    {
-        return 'NASA Power of Ten Rule #1';
-    }
-
-    public function getRuleDescriptor(): string
-    {
-        return 'Avoid complex flow constructs, such as goto and recursion.';
-    }
-
-    public function getNodeType(): string
-    {
-        // We need to handle multiple node types
-        return Node::class;
-    }
+    use HasNodeClassType;
 
     /**
      * @throws NasastanException
@@ -78,7 +69,7 @@ final class NoComplexFlowConstructsRule implements Rule
                 $currentMethodShortName = end($parts);
             }
 
-            if ($currentClass instanceof \PHPStan\Reflection\ClassReflection && $currentMethod !== null && $methodName === $currentMethodShortName) {
+            if ($currentClass instanceof ClassReflection && $currentMethod !== null && $methodName === $currentMethodShortName) {
                 return [
                     RuleErrorBuilder::message(sprintf('%s: Recursive method calls are not allowed.', $this->getRuleName()))
                         ->build(),
@@ -98,7 +89,7 @@ final class NoComplexFlowConstructsRule implements Rule
                 $currentMethodShortName = end($parts);
             }
 
-            if ($currentClass instanceof \PHPStan\Reflection\ClassReflection && $currentMethod !== null && $methodName === $currentMethodShortName) {
+            if ($currentClass instanceof ClassReflection && $currentMethod !== null && $methodName === $currentMethodShortName) {
                 $calledClass = null;
                 if ($node->class instanceof Name) {
                     $calledClass = $node->class->toString();
@@ -114,6 +105,16 @@ final class NoComplexFlowConstructsRule implements Rule
         }
 
         return [];
+    }
+
+    public function getRuleName(): string
+    {
+        return 'NASA Power of Ten Rule #1';
+    }
+
+    public function getRuleDescriptor(): string
+    {
+        return 'Avoid complex flow constructs, such as goto and recursion.';
     }
 
     /**
