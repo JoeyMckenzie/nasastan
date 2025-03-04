@@ -40,8 +40,6 @@ jobs:
 
       - name: Install composer dependencies
         uses: ramsey/composer-install@v3
-        with:
-          composer-options: --${{ matrix.stability }}
 
       - name: List Installed Dependencies
         run: composer show -D

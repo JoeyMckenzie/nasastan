@@ -47,10 +47,6 @@
             "@refactor",
             "@fmt"
         ],
-        "prep": [
-            "@fix",
-            "@check"
-        ],
         "ci": [
             "@lint",
             "@fmt:test",
