@@ -43,13 +43,6 @@
         "refactor": "vendor/bin/rector process",
         "refactor:test": "vendor/bin/rector process --dry-run",
         "typos": "vendor/bin/peck",
-        "check": [
-            "@test",
-            "@fmt:test",
-            "@lint",
-            "@refactor:test",
-            "@peck"
-        ],
         "fix": [
             "@refactor",
             "@fmt"
@@ -62,8 +55,8 @@
             "@lint",
             "@fmt:test",
             "@refactor:test",
-            "@test:ci",
-            "@peck"
+            "@test",
+            "@typos"
         ]
     },
     "config": {
