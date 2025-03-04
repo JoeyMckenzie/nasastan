@@ -2,5 +2,5 @@
 
 set -x
 
-composer run check
+composer run ci
 composer audit
