@@ -1,8 +1,14 @@
-# PHPStan NASA Power of Ten Rules
+# Nasastan 🚀
 
-This PHPStan extension implements NASA's "Power of Ten" programming rules for critical software as PHPStan rules, adapted for PHP.
+A PHPStan extension that enforces
+NASA's [Power of Ten](https://en.wikipedia.org/wiki/The_Power_of_10:_Rules_for_Developing_Safety-Critical_Code)
+rule in your PHP code.
+
+> ⚠️ This is solely a package for self-learning. You're on your own if you use this package for the time being.
 
 ## Installation
+
+To get started, install the package with composer
 
 ```
 composer require --dev joeymckenzie/nasastan
@@ -10,12 +16,13 @@ composer require --dev joeymckenzie/nasastan
 
 ## Usage
 
-Include the extension in your PHPStan configuration:
+If you're using `phpstan/extension-installer`, you're all set!
+
+If not, however, include the extension in your PHPStan configuration:
 
 ```yaml
-# phpstan.neon
 includes:
-    - vendor/joeymckenzie/nasastan/extension.neon
+  - vendor/joeymckenzie/nasastan/extension.neon
 ```
 
 ## Configuration
@@ -24,27 +31,37 @@ You can configure the rules in your `phpstan.neon` file:
 
 ```yaml
 parameters:
-    nasastan:
-        assertionDensity: 0.02    # Minimum assertion density (Rule #5)
-        minAssertions: 2          # Minimum assertions per method (Rule #6)
-        functionSizeLimit: 60     # Maximum function size in lines (Rule #4)
-        initMethods:              # Methods where object creation is allowed (Rule #3)
-            - __construct
-            - initialize
-            - init
-            - setup
-            - boot
-            - register
+  nasastan:
+    assertionDensity: 0.02
+    minAssertions: 2
+    functionSizeLimit: 60
+    initMethods:
+      - __construct
+      - initialize
+      - init
+      - setup
+      - boot
+      - register
+    ignoredFunctions:
+      - array_push
+      - array_unshift
+      - session_start
+      - header
+      - setcookie
+      - error_log
+      - trigger_error
+    allowFluentInterfaces: true 
 ```
 
 ### Configuration Options
 
-| Option | Default | Description |
-|--------|---------|-------------|
-| `assertionDensity` | `0.02` (2%) | Minimum ratio of assertions to lines of code |
-| `minAssertions` | `2` | Minimum number of assertions per method |
-| `functionSizeLimit` | `60` | Maximum function size in lines |
-| `initMethods` | `['__construct', 'initialize', 'init', 'setup', 'boot', 'register']` | Methods where object creation is allowed |
+| Option              | Default                                                                                                 | Description                                               |
+|---------------------|---------------------------------------------------------------------------------------------------------|-----------------------------------------------------------|
+| `assertionDensity`  | `0.02` (2%)                                                                                             | Minimum ratio of assertions to lines of code              |
+| `minAssertions`     | `2`                                                                                                     | Minimum number of assertions per method                   |
+| `functionSizeLimit` | `60`                                                                                                    | Maximum function size in lines                            |
+| `initMethods`       | `['__construct', 'initialize', 'init', 'setup', 'boot', 'register']`                                    | Methods where object creation is allowed                  |
+| `ignoredFunctions`  | `['array_push', 'array_unshift', 'session_start', 'header', 'setcookie', 'error_log', 'trigger_error']` | Methods where return type should not be checked (Rule #8) |
 
 ## Rules
 
@@ -99,28 +116,11 @@ This package implements the following rules inspired by NASA's Power of Ten:
 ## PHP Adaptation
 
 Some rules are adapted to make sense in PHP:
+
 - Rule #9 (Preprocessor use) is not applicable to PHP and is implemented as strict typing requirements
 - Rule #3 (Memory allocation) checks for object instantiation outside configurable initialization methods
 - Rule #5 and #6 (Assertions) count PHP type declarations and if conditions as assertions
-- All threshold values are configurable to match your team's preferences
-
-## Example Project Structure
-
-```
-src/
-├── NasaPowerOfTenConfiguration.php    # Holds configuration values
-├── NasaPowerOfTenExtension.php        # Main extension class
-└── Rules/
-    ├── AssertionDensityRule.php
-    ├── CheckReturnValueRule.php  
-    ├── FixedLoopBoundsRule.php
-    ├── FunctionSizeRule.php
-    ├── NoComplexFlowConstructsRule.php
-    ├── NoDynamicMemoryAllocationRule.php
-    ├── NoRecursionRule.php
-    ├── StrictTypesRule.php
-    └── VariableScopeRule.php
-```
+- All threshold values are configurable to match your personal preferences
 
 ## References
 
