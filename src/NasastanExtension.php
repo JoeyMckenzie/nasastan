@@ -12,7 +12,7 @@ use PHPStan\Rules\Rule;
  */
 final readonly class NasastanExtension
 {
-    public function __construct(private NasastanConfiguration $configuration)
+    public function __construct()
     {
         //
     }

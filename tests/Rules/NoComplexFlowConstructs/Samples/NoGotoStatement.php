@@ -7,7 +7,7 @@ namespace Tests\Rules\NoComplexFlowConstructs\Samples;
 /**
  * Sample file with no goto statements.
  */
-function testNoGotoFunction()
+function testNoGotoFunction(): int
 {
     $i = 0;
     while ($i < 10) {

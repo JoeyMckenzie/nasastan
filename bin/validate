@@ -1,0 +1,97 @@
+#!/bin/bash
+
+# Function to print error message and exit with failure status
+print_error() {
+    echo "Error: $1" >&2
+    exit 1
+}
+
+# Function to validate the commit message
+validate_commit_message() {
+    local message="$(head -n1 $1)"
+
+    echo "$message"
+
+    # Regular expressions for different parts of the commit message
+    local type_regex="^(feat|fix|docs|style|refactor|perf|test|build|ci|chore|revert|poc)"
+    local scope_regex="\([[:alnum:]-]+\)"
+    local breaking_change="!"
+    local description_regex=": .+"
+
+    # Check if message is empty
+    if [ -z "$message" ]; then
+        print_error "Commit message cannot be empty"
+    fi
+
+    # Split message into lines
+    IFS=$'\n' read -rd '' -a lines <<<"$message"
+    local first_line="${lines[0]}"
+
+    # Validate first line format
+    if ! [[ "$first_line" =~ $type_regex ]]; then
+        print_error "Commit message must start with a valid type (feat, fix, docs, etc.)"
+    fi
+
+    # Extract the prefix (everything before the colon)
+    local prefix="${first_line%%:*}"
+
+    # Check if scope is present and valid (if included)
+    if [[ "$prefix" =~ \( ]]; then
+        if ! [[ "$prefix" =~ $type_regex$scope_regex(!)?$ ]]; then
+            print_error "Invalid scope format in commit message"
+        fi
+    fi
+
+    # Check for breaking change indicator
+    if [[ "$prefix" =~ \!$ ]] && ! [[ "$prefix" =~ $type_regex($scope_regex)?\!$ ]]; then
+        print_error "Invalid breaking change format in commit message"
+    fi
+
+    # Validate description presence
+    if ! [[ "$first_line" =~ $description_regex ]]; then
+        print_error "Commit message must have a description after the type/scope"
+    fi
+
+    # Validate body format if present
+    if [ ${#lines[@]} -gt 1 ]; then
+        # Check if there's a blank line between subject and body
+        if [ -n "${lines[1]}" ]; then
+            print_error "There must be a blank line between subject and body"
+        fi
+
+        # Validate footer format if present
+        for ((i=2; i<${#lines[@]}; i++)); do
+            local line="${lines[i]}"
+            # Skip empty lines
+            [ -z "$line" ] && continue
+
+            # Check for footer format (if it looks like a footer)
+            if [[ "$line" =~ ^[A-Z][A-Z0-9-]*:[[:space:]] ]] || [[ "$line" =~ ^BREAKING[[:space:]]CHANGE:[[:space:]] ]]; then
+                # Valid footer format found, continue to next line
+                continue
+            fi
+
+            # If line starts with what looks like a footer token but doesn't match the format, it's invalid
+            if [[ "$line" =~ ^[A-Z][A-Z0-9-]*[^:].*$ ]] || [[ "$line" =~ ^BREAKING[[:space:]]CHANGE[^:].*$ ]]; then
+                print_error "Invalid footer format: $line"
+            fi
+        done
+    fi
+
+    echo "Commit message is valid!"
+    exit 0
+}
+
+# Main execution
+if [ -z "$1" ]; then
+    # If no argument provided, try to read from .git/COMMIT_EDITMSG
+    if [ -f .git/COMMIT_EDITMSG ]; then
+        commit_msg=$(cat .git/COMMIT_EDITMSG)
+    else
+        print_error "No commit message provided and .git/COMMIT_EDITMSG not found"
+    fi
+else
+    commit_msg="$1"
+fi
+
+validate_commit_message "$commit_msg"
