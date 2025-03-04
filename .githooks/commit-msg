@@ -1,0 +1,26 @@
+#!/bin/sh
+
+set -x
+
+# Get the git project root directory
+project_root=$(git rev-parse --show-toplevel)
+
+# Define the path to the validate script
+validate_script="$project_root/bin/validate"
+
+# Check if the script exists
+if [ ! -f "$validate_script" ]; then
+    echo "Error: Validation script not found at: $validate_script" >&2
+    exit 1
+fi
+
+# Check if the script is executable
+if [ ! -x "$validate_script" ]; then
+    echo "Error: Validation script is not executable: $validate_script" >&2
+    echo "Try running: chmod +x $validate_script" >&2
+    exit 1
+fi
+
+# Execute the validate script from the bin directory
+exec "$validate_script" "$1"
+

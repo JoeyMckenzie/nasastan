@@ -1,0 +1,52 @@
+name: run-ci
+
+on:
+  push:
+    paths:
+      - '**.php'
+      - '.github/workflows/run-ci.yml'
+      - 'phpunit.xml.dist'
+      - 'phpstan.neon.dist'
+      - 'composer.json'
+      - 'composer.lock'
+
+jobs:
+  test:
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 5
+    strategy:
+      fail-fast: true
+      matrix:
+        os: [ ubuntu-latest ]
+        php: [ 8.3, 8.4 ]
+        stability: [ prefer-stable ]
+
+    name: php ${{ matrix.php }} - ${{ matrix.stability }} - ${{ matrix.os }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          coverage: xdebug
+
+      - name: Install dependencies
+        run: |
+          composer require --no-interaction --no-update
+          composer update --${{ matrix.stability }} --prefer-dist --no-interaction
+
+      - name: List Installed Dependencies
+        run: composer show -D
+
+      - name: Install Aspell (Ubuntu)
+        if: runner.os == 'Linux'
+        shell: bash
+        run: sudo apt-get update && sudo apt-get install -y aspell aspell-en
+
+      - name: Run CI
+        run: composer run ci
+        env:
+          LANG: en_US.UTF-8

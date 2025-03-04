@@ -1,0 +1,14 @@
+#!/bin/sh
+
+set -x
+
+composer run fix
+
+# Check if any files were modified by the formatting
+if [ -n "$(git diff --name-only)" ]; then
+    # Add the modified files back to staging
+    git add .
+fi
+
+# If no files were modified, continue with the original commit
+exit 0

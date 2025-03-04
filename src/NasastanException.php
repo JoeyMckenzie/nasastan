@@ -1,20 +1,23 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Nasastan;
 
 use Exception;
-use PHPStan\ShouldNotHappenException;
+use Throwable;
 
-class NasastanException extends Exception
+/**
+ * @internal
+ */
+final class NasastanException extends Exception
 {
-    public function __construct(string $rule, ShouldNotHappenException $exceptionMessage)
+    public function __construct(string $ruleDescriptor, ?Throwable $previous = null)
     {
         parent::__construct(
-            sprintf(
-                '%s: failed to assert Nasastan rule. Reason: %s',
-                $rule,
-                $exceptionMessage->getMessage()
-            )
+            "An error occurred while processing rule $ruleDescriptor",
+            0,
+            $previous
         );
     }
 }

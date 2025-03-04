@@ -1,0 +1,88 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Tests\Rules\NoComplexFlowConstructs;
+
+use Nasastan\Rules\NoComplexFlowConstructsRule;
+use PhpParser\Node;
+use PHPStan\Rules\Rule;
+use Tests\AbstractRuleTest;
+
+/**
+ * @extends AbstractRuleTest<NoComplexFlowConstructsRule>
+ */
+final class RuleTest extends AbstractRuleTest
+{
+    private readonly Rule $rule;
+
+    protected function setUp(): void
+    {
+        $this->rule = new NoComplexFlowConstructsRule();
+    }
+
+    public function test_detects_goto_statements(): void
+    {
+        $this->analyse([__DIR__.'/Samples/GotoStatement.php'], [
+            [
+                'NASA Power of Ten Rule #1: Goto statements are not allowed.',
+                16,
+            ],
+        ]);
+    }
+
+    public function test_passes_with_no_complex_flow_constructs(): void
+    {
+        $this->analyse([__DIR__.'/Samples/NoGotoStatement.php'], []);
+    }
+
+    public function test_detects_recursive_functions(): void
+    {
+        $this->analyse([__DIR__.'/Samples/RecursiveFunction.php'], [
+            [
+                'NASA Power of Ten Rule #1: Recursive function calls are not allowed.',
+                16,
+            ],
+        ]);
+    }
+
+    public function test_detects_recursive_methods(): void
+    {
+        $this->analyse([__DIR__.'/Samples/RecursiveClass.php'], [
+            [
+                'NASA Power of Ten Rule #1: Recursive method calls are not allowed.',
+                21,
+            ],
+        ]);
+    }
+
+    public function test_detects_recursive_static_methods(): void
+    {
+        $this->analyse([__DIR__.'/Samples/StaticRecursiveClass.php'], [
+            [
+                'NASA Power of Ten Rule #1: Recursive static method calls are not allowed.',
+                21,
+            ],
+        ]);
+    }
+
+    public function test_rule_name(): void
+    {
+        $this->assertEquals('NASA Power of Ten Rule #1', $this->rule->getRuleName());
+    }
+
+    public function test_rule_descriptor(): void
+    {
+        $this->assertEquals('Avoid complex flow constructs, such as goto and recursion.', $this->rule->getRuleDescriptor());
+    }
+
+    public function test_node_type(): void
+    {
+        $this->assertEquals(Node::class, $this->rule->getNodeType());
+    }
+
+    protected function getRule(): Rule
+    {
+        return $this->rule;
+    }
+}

@@ -1,25 +1,20 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Nasastan;
 
-use Nasastan\Rules\AssertionDensityRule;
-use Nasastan\Rules\CheckReturnValueRule;
-use Nasastan\Rules\FixedLoopBoundsRule;
-use Nasastan\Rules\FunctionSizeRule;
 use Nasastan\Rules\NoComplexFlowConstructsRule;
-use Nasastan\Rules\NoDynamicMemoryAllocationRule;
-use Nasastan\Rules\NoRecursionRule;
-use Nasastan\Rules\StrictTypesRule;
-use Nasastan\Rules\VariableScopeRule;
 use PHPStan\Rules\Rule;
 
-class NasastanExtension
+/**
+ * @internal
+ */
+final readonly class NasastanExtension
 {
-    private NasastanConfiguration $configuration;
-
-    public function __construct(NasastanConfiguration $configuration)
+    public function __construct(private NasastanConfiguration $configuration)
     {
-        $this->configuration = $configuration;
+        //
     }
 
     /**
@@ -29,14 +24,14 @@ class NasastanExtension
     {
         return [
             new NoComplexFlowConstructsRule(),
-            new NoRecursionRule(),
-            new FixedLoopBoundsRule(),
-            new NoDynamicMemoryAllocationRule($this->configuration),
-            new FunctionSizeRule($this->configuration),
-            new AssertionDensityRule($this->configuration, $this->configuration),
-            new VariableScopeRule(),
-            new CheckReturnValueRule(),
-            new StrictTypesRule(),
+            // new NoRecursionRule(),
+            // new FixedLoopBoundsRule(),
+            // new NoDynamicMemoryAllocationRule($this->configuration),
+            // new FunctionSizeRule($this->configuration),
+            // new AssertionDensityRule($this->configuration, $this->configuration),
+            // new VariableScopeRule(),
+            // new CheckReturnValueRule(),
+            // new StrictTypesRule(),
         ];
     }
 }
