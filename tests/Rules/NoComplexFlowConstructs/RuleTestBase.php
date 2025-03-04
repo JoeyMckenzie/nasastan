@@ -7,12 +7,12 @@ namespace Tests\Rules\NoComplexFlowConstructs;
 use Nasastan\Rules\NoComplexFlowConstructsRule;
 use PhpParser\Node;
 use PHPStan\Rules\Rule;
-use Tests\AbstractRuleTest;
+use Tests\AbstractRuleTestBase;
 
 /**
- * @extends AbstractRuleTest<NoComplexFlowConstructsRule>
+ * @extends AbstractRuleTestBase<NoComplexFlowConstructsRule>
  */
-final class RuleTest extends AbstractRuleTest
+final class RuleTestBase extends AbstractRuleTestBase
 {
     private readonly Rule $rule;
 

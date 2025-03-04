@@ -10,7 +10,7 @@ use PHPStan\Testing\RuleTestCase;
 /**
  * @template TRule of NasastanRule
  */
-abstract class AbstractRuleTest extends RuleTestCase
+abstract class AbstractRuleTestBase extends RuleTestCase
 {
     abstract public function test_rule_name(): void;
 
