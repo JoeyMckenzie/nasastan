@@ -23,7 +23,7 @@ final class RuleTest extends AbstractRuleTest
 
     public function test_detects_goto_statements(): void
     {
-        $this->analyse([__DIR__.'/Samples/GotoStatement.php'], [
+        $this->analyse([__DIR__.'/Examples/GotoStatement.php'], [
             [
                 'NASA Power of Ten Rule #1: Goto statements are not allowed.',
                 15,
@@ -33,12 +33,12 @@ final class RuleTest extends AbstractRuleTest
 
     public function test_passes_with_no_complex_flow_constructs(): void
     {
-        $this->analyse([__DIR__.'/Samples/NoGotoStatement.php'], []);
+        $this->analyse([__DIR__.'/Examples/NoGotoStatement.php'], []);
     }
 
     public function test_detects_recursive_functions(): void
     {
-        $this->analyse([__DIR__.'/Samples/RecursiveFunction.php'], [
+        $this->analyse([__DIR__.'/Examples/RecursiveFunction.php'], [
             [
                 'NASA Power of Ten Rule #1: Recursive function calls are not allowed.',
                 16,
@@ -48,7 +48,7 @@ final class RuleTest extends AbstractRuleTest
 
     public function test_detects_recursive_methods(): void
     {
-        $this->analyse([__DIR__.'/Samples/RecursiveClass.php'], [
+        $this->analyse([__DIR__.'/Examples/RecursiveClass.php'], [
             [
                 'NASA Power of Ten Rule #1: Recursive method calls are not allowed.',
                 21,
@@ -58,7 +58,7 @@ final class RuleTest extends AbstractRuleTest
 
     public function test_detects_recursive_static_methods(): void
     {
-        $this->analyse([__DIR__.'/Samples/StaticRecursiveClass.php'], [
+        $this->analyse([__DIR__.'/Examples/StaticRecursiveClass.php'], [
             [
                 'NASA Power of Ten Rule #1: Recursive static method calls are not allowed.',
                 21,

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tests\Rules\NoComplexFlowConstructs\Samples;
+namespace Tests\Rules\NoComplexFlowConstructs\Examples;
 
 /**
  * Sample file with no goto statements.
