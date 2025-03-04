@@ -26,7 +26,7 @@ final class RuleTest extends AbstractRuleTest
         $this->analyse([__DIR__.'/Samples/GotoStatement.php'], [
             [
                 'NASA Power of Ten Rule #1: Goto statements are not allowed.',
-                16,
+                15,
             ],
         ]);
     }
