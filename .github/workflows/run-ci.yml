@@ -1,4 +1,4 @@
-name: run-ci
+name: Run CI checks
 
 on:
   push:
