@@ -93,8 +93,9 @@ final class FixedUpperBoundOnLoopsRuleTest extends NasastanRuleTestCase
     #[Test]
     public function test_foreach_with_too_large_array_fails(): void
     {
-        $this->markTestSkipped('TODO: Need to figure out the unbounded check for this scenario, currently missing the brain power to do so');
+        Assert::markTestSkipped('TODO: Need to figure out the unbounded check for this scenario, currently missing the brain power to do so');
 
+        // @phpstan-ignore-next-line
         $this->analyse([__DIR__.'/../Examples/Rule_2/ForeachLargeArray.php'], [
             [
                 'Foreach loop iterates over 101 items, which exceeds the configured maximum of 100 iterations.',
