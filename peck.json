@@ -5,7 +5,9 @@
             "php",
             "nasastan",
             "ast",
-            "goto"
+            "goto",
+            "cond",
+            "foreach"
         ]
     }
 }
