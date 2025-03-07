@@ -47,7 +47,7 @@ final readonly class FixedUpperBoundOnLoopsRule implements NasastanRule
             }
 
             if ($node instanceof While_ || $node instanceof Do_) {
-                return $this->checkWhileLoop($node, $scope);
+                return $this->checkWhileLoop($node);
             }
 
             if ($node instanceof Foreach_) {
@@ -133,7 +133,7 @@ final readonly class FixedUpperBoundOnLoopsRule implements NasastanRule
      *
      * @throws ShouldNotHappenException
      */
-    private function checkWhileLoop(While_|Do_ $node, Scope $scope): array
+    private function checkWhileLoop(While_|Do_ $node): array
     {
         // For simple detection, first we'll check for while(true) or do-while(true) conditions
         if ($this->isAlwaysTrue($node->cond)) {
@@ -186,29 +186,23 @@ final readonly class FixedUpperBoundOnLoopsRule implements NasastanRule
         // Arrays with known size are inherently bounded
         $constantArrays = $exprType->getConstantArrays();
 
-        if (count($constantArrays) > 0) {
-            foreach ($constantArrays as $value) {
-                $arraySize = count($value->getKeyTypes());
+        foreach ($constantArrays as $value) {
+            $arraySize = count($value->getKeyTypes());
 
-                // If the array count exceeds the maxed allowed iterations, don't allow it
-                if ($arraySize >= $this->maxAllowedIterations) {
-                    return [
-                        RuleErrorBuilder::message(sprintf(
-                            'Foreach loop iterates over %d items, which exceeds the configured maximum of %d iterations.',
-                            $arraySize,
-                            $this->maxAllowedIterations
-                        ))->build(),
-                    ];
-                }
+            if ($arraySize > $this->maxAllowedIterations) {
+                return [
+                    RuleErrorBuilder::message(sprintf(
+                        'Foreach loop iterates over %d items, which exceeds the configured maximum of %d iterations.',
+                        $arraySize,
+                        $this->maxAllowedIterations
+                    ))->build(),
+                ];
             }
-
-            return [];
         }
 
         // Check if it's a countable object or array type
         if (new ObjectType('Countable')->isSuperTypeOf($exprType)->yes() || $exprType->isArray()->yes()) {
             // We can't statically guarantee the size, but it's likely bounded
-            // TODO: We could probably add a warning instead of giving a pass
             return [];
         }
 
