@@ -1,6 +1,10 @@
 parameters:
     nasastan:
+        # Rule 2: Fixed upper bounds on loops
+        maxAllowedIterations: 1000
         functionSizeLimit: 60
+
+        # Rule 3: No heap allocation after init
         allowedInitMethods:
             - __construct
             - initialize
@@ -17,11 +21,20 @@ parameters:
             - imagecreate
             - imagecreatetruecolor
 
+        # Rule 4: Restrict function length
+        maxLinesPerFunction: 60
+        includeComments: true
+        includeBlankLines: true
+
 parametersSchema:
     nasastan: structure([
+        maxAllowedIterations: schema(int(), nullable())
         functionSizeLimit: schema(int(), nullable())
         allowedInitMethods: arrayOf(string())
         resourceAllocationFunctions: arrayOf(string())
+        maxLinesPerFunction: integer()
+        includeComments: bool()
+        includeBlankLines: bool()
     ])
 
 services:
@@ -31,3 +44,21 @@ services:
             functionSizeLimit: %nasastan.functionSizeLimit%
             allowedInitMethods: %nasastan.initMethods%
             resourceAllocationFunctions: %nasastan.initMethods%
+        tags:
+            - phpstan.rules.rule
+
+    -
+        class: Nasastan\NasastanConfiguration
+        arguments:
+            maxAllowedIterations: %nasastan.maxAllowedIterations%
+        tags:
+            - phpstan.rules.rule
+
+    -
+        class: Nasastan\NasastanConfiguration
+        arguments:
+            maxLines: %nasastan.maxLinesPerFunction%
+            includeComments: %nasastan.includeComments%
+            includeBlankLines: %nasastan.includeBlankLines%
+        tags:
+            - phpstan.rules.rule

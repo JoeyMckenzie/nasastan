@@ -120,7 +120,7 @@ final class NoHeapAllocationAfterInitRule implements NasastanRule
     private function isDynamicContainerMethod(string $methodName, Scope $scope, MethodCall $node): bool
     {
         // List of container methods that allocate memory
-        // TODO: put this in configuration
+        // TODO: Probably need to put this in configuration
         $containerMethods = [
             'add',
             'push',
@@ -137,7 +137,7 @@ final class NoHeapAllocationAfterInitRule implements NasastanRule
         // Check if the called object is a container type
         $calledOnType = $scope->getType($node->var);
 
-        // TODO: put this in configuration
+        // TODO: Probably need to put this in configuration
         $containerClasses = [
             'SplDoublyLinkedList',
             'SplStack',
@@ -145,6 +145,6 @@ final class NoHeapAllocationAfterInitRule implements NasastanRule
             'ArrayObject',
         ];
 
-        return array_any($containerClasses, fn ($containerClass): bool => $calledOnType->accepts(new ObjectType($containerClass), true)->yes());
+        return array_any($containerClasses, fn (string $containerClass): bool => $calledOnType->accepts(new ObjectType($containerClass), true)->yes());
     }
 }
