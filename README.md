@@ -8,7 +8,7 @@ rule in your PHP code.
 
 ## Installation
 
-To get started, install the package with composer
+To get started, install the package with composer:
 
 ```
 composer require --dev joeymckenzie/nasastan
