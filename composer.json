@@ -42,7 +42,10 @@
     },
     "scripts": {
         "prepare": "git config core.hookspath .githooks",
-        "test": "vendor/bin/phpunit",
+        "test": [
+            "@fmt",
+            "vendor/bin/phpunit"
+        ],
         "fmt": "vendor/bin/pint",
         "fmt:test": "vendor/bin/pint --test",
         "lint": "vendor/bin/phpstan analyze",

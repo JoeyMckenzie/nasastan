@@ -33,19 +33,19 @@ final class MinimumAssertionsPerFunctionRuleTest extends NasastanRuleTestCase
         $this->analyse([__DIR__.'/../Examples/Rule_5/MinimumAssertionsPerFunction.php'], [
             [
                 'NASA Power of Ten Rule #5: Function "notEnoughAssertions" contains 1 assertions, but at least 2 are required.',
-                23,
+                24,
             ],
             [
                 'NASA Power of Ten Rule #5: Function "noAssertions" contains 0 assertions, but at least 2 are required.',
-                33,
+                34,
             ],
             [
                 'NASA Power of Ten Rule #5: Function "methodWithOneAssertion" contains 1 assertions, but at least 2 are required.',
-                57,
+                56,
             ],
             [
                 'NASA Power of Ten Rule #5: Function "globalFunctionWithNotEnoughAssertions" contains 0 assertions, but at least 2 are required.',
-                111,
+                110,
             ],
         ]);
     }

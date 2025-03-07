@@ -54,16 +54,17 @@ final class MinimumAssertionsPerFunctionRule implements NasastanRule
 
     public function processNode(Node $node, Scope $scope): array
     {
-        // Skip if this is an interface or abstract method without a body
+        // No need to check interfaces or abstract methods without a body
         if ($node instanceof ClassMethod && ($node->isAbstract() || $node->stmts === null)) {
             return [];
         }
 
-        // Skip magic methods
+        // Similarly, we'll skip magic methods too (looking at you, Laravel...)
         if ($node instanceof ClassMethod && mb_strpos($node->name->toString(), '__') === 0) {
             return [];
         }
 
+        // We only need to validate assertions for methods and functions
         if ($node instanceof ClassMethod || $node instanceof Function_) {
             $functionName = $node->name->toString();
 
@@ -98,7 +99,7 @@ final class MinimumAssertionsPerFunctionRule implements NasastanRule
     }
 
     /**
-     * Count the number of assertions in a node.
+     * Counts the number of assertions within a node's statements and expressions.
      */
     private function countAssertionsInNode(Node $node): int
     {
@@ -107,6 +108,7 @@ final class MinimumAssertionsPerFunctionRule implements NasastanRule
 
         // Find all function calls that might be assertions
         $funcCalls = $nodeFinder->findInstanceOf($node, FuncCall::class);
+
         foreach ($funcCalls as $funcCall) {
             if ($funcCall->name instanceof Node\Name) {
                 $functionName = $funcCall->name->toString();
@@ -118,6 +120,7 @@ final class MinimumAssertionsPerFunctionRule implements NasastanRule
 
         // Find all method calls that might be assertions
         $methodCalls = $nodeFinder->findInstanceOf($node, MethodCall::class);
+
         foreach ($methodCalls as $methodCall) {
             if ($methodCall->name instanceof Node\Identifier) {
                 $methodName = $methodCall->name->toString();
@@ -129,6 +132,7 @@ final class MinimumAssertionsPerFunctionRule implements NasastanRule
 
         // Find all static method calls that might be assertions
         $staticCalls = $nodeFinder->findInstanceOf($node, StaticCall::class);
+
         foreach ($staticCalls as $staticCall) {
             if ($staticCall->name instanceof Node\Identifier) {
                 $methodName = $staticCall->name->toString();
@@ -141,6 +145,7 @@ final class MinimumAssertionsPerFunctionRule implements NasastanRule
         // Find if statements with exception-throwing calls or throw statements,
         // which act as assertions
         $ifStatements = $nodeFinder->findInstanceOf($node, Node\Stmt\If_::class);
+
         foreach ($ifStatements as $ifStatement) {
             // Look for throw statements within if blocks
             foreach ($ifStatement->stmts as $stmt) {
