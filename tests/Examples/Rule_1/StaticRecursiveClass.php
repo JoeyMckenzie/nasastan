@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tests\Examples;
+namespace Tests\Examples\Rule_1;
 
 /**
  * Sample class containing a recursive static method that should trigger the rule.

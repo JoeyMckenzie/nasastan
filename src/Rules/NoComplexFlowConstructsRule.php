@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Nasastan\Rules;
 
-use Nasastan\NasastanException;
 use Nasastan\NasastanRule;
 use Nasastan\Rules\Concerns\HasNodeClassType;
 use PhpParser\Node;
@@ -24,12 +23,9 @@ final class NoComplexFlowConstructsRule implements NasastanRule
 {
     use HasNodeClassType;
 
-    /**
-     * @throws NasastanException
-     */
     public function processNode(Node $node, Scope $scope): array
     {
-        // Check for goto statements
+        // First, we'll check for goto statements - pretty simple, outlaw all gotos
         if ($node instanceof Node\Stmt\Goto_) {
             return [
                 RuleErrorBuilder::message(sprintf('%s: Goto statements are not allowed.', $this->getRuleName()))
@@ -37,18 +33,20 @@ final class NoComplexFlowConstructsRule implements NasastanRule
             ];
         }
 
-        // Check for direct recursion in function calls
+        // Next, check for direct recursion in function calls
         if ($node instanceof FuncCall && $node->name instanceof Name) {
             $functionName = $node->name->toString();
             $currentFunction = $scope->getFunctionName();
 
-            // Get the short name of the current function (without namespace)
+            // Get the short name of the current function without the inclusion of the namespace
             $currentFunctionShortName = $currentFunction;
+
             if (str_contains((string) $currentFunction, '\\')) {
                 $parts = explode('\\', (string) $currentFunction);
                 $currentFunctionShortName = end($parts);
             }
 
+            // We've detected a function calling itself
             if ($functionName === $currentFunctionShortName) {
                 return [
                     RuleErrorBuilder::message(sprintf('%s: Recursive function calls are not allowed.', $this->getRuleName()))
@@ -57,19 +55,20 @@ final class NoComplexFlowConstructsRule implements NasastanRule
             }
         }
 
-        // Check for direct recursion in method calls
+        // Similarly, check for direct recursion in method calls
         if ($node instanceof Node\Expr\MethodCall) {
-            $methodName = $node->name->name ?? null;
+            $methodName = $node->name->name ?? null; // @phpstan-ignore-line
             $currentClass = $scope->getClassReflection();
             $currentMethod = $scope->getFunctionName();
 
-            // Get the short name of the current method (without namespace)
             $currentMethodShortName = $currentMethod;
+
             if (str_contains((string) $currentMethod, '::')) {
                 $parts = explode('::', (string) $currentMethod);
                 $currentMethodShortName = end($parts);
             }
 
+            // We've detected a method class method calling itself
             if ($currentClass instanceof ClassReflection && $currentMethod !== null && $methodName === $currentMethodShortName) {
                 return [
                     RuleErrorBuilder::message(sprintf('%s: Recursive method calls are not allowed.', $this->getRuleName()))
@@ -78,14 +77,14 @@ final class NoComplexFlowConstructsRule implements NasastanRule
             }
         }
 
-        // Check for direct recursion in static method calls
+        // Lastly, check for direct recursion in static method calls
         if ($node instanceof StaticCall && $node->name instanceof Node\Identifier) {
             $methodName = $node->name->name;
             $currentClass = $scope->getClassReflection();
             $currentMethod = $scope->getFunctionName();
 
-            // Get the short name of the current method (without namespace)
             $currentMethodShortName = $currentMethod;
+
             if (str_contains((string) $currentMethod, '::')) {
                 $parts = explode('::', (string) $currentMethod);
                 $currentMethodShortName = end($parts);
@@ -93,10 +92,12 @@ final class NoComplexFlowConstructsRule implements NasastanRule
 
             if ($currentClass instanceof ClassReflection && $currentMethod !== null && $methodName === $currentMethodShortName) {
                 $calledClass = null;
+
                 if ($node->class instanceof Name) {
                     $calledClass = $node->class->toString();
                 }
 
+                // We've detected a static method calling itself
                 if ($calledClass === 'self' || $calledClass === 'static' || $calledClass === $currentClass->getName()) {
                     return [
                         RuleErrorBuilder::message(sprintf('%s: Recursive static method calls are not allowed.', $this->getRuleName()))

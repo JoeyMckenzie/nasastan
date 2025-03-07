@@ -10,5 +10,9 @@ parameters:
             paths:
                 - src/Rules/*.php
         -
+            message: '#Method Nasastan\\Rules\\[a-zA-Z]+::processNode\(\) should return list<PHPStan\\Rules\\IdentifierRuleError> but returns array<int, PHPStan\\Rules\\RuleError>.#'
+            paths:
+                - src/Rules/*.php
+        -
             message: '#Access to an undefined property PhpParser\\Node\\Expr|PhpParser\\Node\\Identifier::\$name.#'
             path: src/Rules/NoComplexFlowConstructsRule.php

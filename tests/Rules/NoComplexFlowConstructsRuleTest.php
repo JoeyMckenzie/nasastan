@@ -14,7 +14,7 @@ use Tests\NasastanRuleTestCase;
 /**
  * @extends NasastanRuleTestCase<NoComplexFlowConstructsRule>
  */
-final class NoComplexFlowConstructsTest extends NasastanRuleTestCase
+final class NoComplexFlowConstructsRuleTest extends NasastanRuleTestCase
 {
     private readonly NoComplexFlowConstructsRule $rule;
 
@@ -26,7 +26,7 @@ final class NoComplexFlowConstructsTest extends NasastanRuleTestCase
     #[Test]
     public function test_detects_goto_statements(): void
     {
-        $this->analyse([__DIR__.'/../Examples/GotoStatement.php'], [
+        $this->analyse([__DIR__.'/../Examples/Rule_1/GotoStatement.php'], [
             [
                 'NASA Power of Ten Rule #1: Goto statements are not allowed.',
                 15,
@@ -37,13 +37,13 @@ final class NoComplexFlowConstructsTest extends NasastanRuleTestCase
     #[Test]
     public function test_passes_with_no_complex_flow_constructs(): void
     {
-        $this->analyse([__DIR__.'/../Examples/NoGotoStatement.php'], []);
+        $this->analyse([__DIR__.'/../Examples/Rule_1/NoGotoStatement.php'], []);
     }
 
     #[Test]
     public function test_detects_recursive_functions(): void
     {
-        $this->analyse([__DIR__.'/../Examples/RecursiveFunction.php'], [
+        $this->analyse([__DIR__.'/../Examples/Rule_1/RecursiveFunction.php'], [
             [
                 'NASA Power of Ten Rule #1: Recursive function calls are not allowed.',
                 16,
@@ -54,7 +54,7 @@ final class NoComplexFlowConstructsTest extends NasastanRuleTestCase
     #[Test]
     public function test_detects_recursive_methods(): void
     {
-        $this->analyse([__DIR__.'/../Examples/RecursiveClass.php'], [
+        $this->analyse([__DIR__.'/../Examples/Rule_1/RecursiveClass.php'], [
             [
                 'NASA Power of Ten Rule #1: Recursive method calls are not allowed.',
                 21,
@@ -65,7 +65,7 @@ final class NoComplexFlowConstructsTest extends NasastanRuleTestCase
     #[Test]
     public function test_detects_recursive_static_methods(): void
     {
-        $this->analyse([__DIR__.'/../Examples/StaticRecursiveClass.php'], [
+        $this->analyse([__DIR__.'/../Examples/Rule_1/StaticRecursiveClass.php'], [
             [
                 'NASA Power of Ten Rule #1: Recursive static method calls are not allowed.',
                 21,
