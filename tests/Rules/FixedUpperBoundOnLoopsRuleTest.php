@@ -36,7 +36,7 @@ final class FixedUpperBoundOnLoopsRuleTest extends NasastanRuleTestCase
     {
         $this->analyse([__DIR__.'/../Examples/Rule_2/UnboundedForLoop.php'], [
             [
-                'For loop must have a condition and increment to ensure fixed bounds.',
+                'NASA Power of Ten Rule #2: For loop must have a condition and increment to ensure fixed bounds.',
                 15,
             ],
         ]);
@@ -47,7 +47,7 @@ final class FixedUpperBoundOnLoopsRuleTest extends NasastanRuleTestCase
     {
         $this->analyse([__DIR__.'/../Examples/Rule_2/DynamicBoundForLoop.php'], [
             [
-                'For loop must have a fixed upper bound to prevent runaway code.',
+                'NASA Power of Ten Rule #2: For loop must have a fixed upper bound to prevent runaway code.',
                 16,
             ],
         ]);
@@ -58,7 +58,7 @@ final class FixedUpperBoundOnLoopsRuleTest extends NasastanRuleTestCase
     {
         $this->analyse([__DIR__.'/../Examples/Rule_2/WhileTrueLoop.php'], [
             [
-                'While/do-while loop with condition "true" has no upper bound.',
+                'NASA Power of Ten Rule #2: While/do-while loop with condition "true" has no upper bound.',
                 15,
             ],
         ]);
@@ -69,7 +69,7 @@ final class FixedUpperBoundOnLoopsRuleTest extends NasastanRuleTestCase
     {
         $this->analyse([__DIR__.'/../Examples/Rule_2/DoWhileTrueLoop.php'], [
             [
-                'While/do-while loop with condition "true" has no upper bound.',
+                'NASA Power of Ten Rule #2: While/do-while loop with condition "true" has no upper bound.',
                 15,
             ],
         ]);
@@ -80,7 +80,7 @@ final class FixedUpperBoundOnLoopsRuleTest extends NasastanRuleTestCase
     {
         $this->analyse([__DIR__.'/../Examples/Rule_2/WhileDynamicCondition.php'], [
             [
-                'While/do-while loop must have a verifiable fixed upper bound to prevent runaway code.',
+                'NASA Power of Ten Rule #2: While/do-while loop must have a verifiable fixed upper bound to prevent runaway code.',
                 16,
             ],
         ]);
@@ -100,7 +100,7 @@ final class FixedUpperBoundOnLoopsRuleTest extends NasastanRuleTestCase
         // @phpstan-ignore-next-line
         $this->analyse([__DIR__.'/../Examples/Rule_2/ForeachLargeArray.php'], [
             [
-                'Foreach loop iterates over 101 items, which exceeds the configured maximum of 100 iterations.',
+                'NASA Power of Ten Rule #2: Foreach loop iterates over 101 items, which exceeds the configured maximum of 100 iterations.',
                 14,
             ],
         ]);
@@ -111,7 +111,7 @@ final class FixedUpperBoundOnLoopsRuleTest extends NasastanRuleTestCase
     {
         $this->analyse([__DIR__.'/../Examples/Rule_2/ForeachGenerator.php'], [
             [
-                'Foreach loop must iterate over a countable collection with a verifiable size bound.',
+                'NASA Power of Ten Rule #2: Foreach loop must iterate over a countable collection with a verifiable size bound.',
                 18,
             ],
         ]);

@@ -88,7 +88,10 @@ final readonly class FixedUpperBoundOnLoopsRule implements NasastanRule
         // For loops should have a condition and increment
         if (count($node->cond) === 0 || count($node->loop) === 0) {
             return [
-                RuleErrorBuilder::message('For loop must have a condition and increment to ensure fixed bounds.')
+                RuleErrorBuilder::message(sprintf(
+                    '%s: For loop must have a condition and increment to ensure fixed bounds.',
+                    $this->getRuleName()
+                ))
                     ->build(),
             ];
         }
@@ -100,7 +103,10 @@ final readonly class FixedUpperBoundOnLoopsRule implements NasastanRule
 
         // We didn't detect a fixed upper bound, so assume we've got some runaway code
         return [
-            RuleErrorBuilder::message('For loop must have a fixed upper bound to prevent runaway code.')
+            RuleErrorBuilder::message(sprintf(
+                '%s: For loop must have a fixed upper bound to prevent runaway code.',
+                $this->getRuleName()
+            ))
                 ->build(),
         ];
     }
@@ -144,7 +150,10 @@ final readonly class FixedUpperBoundOnLoopsRule implements NasastanRule
         // For simple detection, first we'll check for while(true) or do-while(true) conditions
         if ($this->isAlwaysTrue($node->cond)) {
             return [
-                RuleErrorBuilder::message('While/do-while loop with condition "true" has no upper bound.')
+                RuleErrorBuilder::message(sprintf(
+                    '%s: While/do-while loop with condition "true" has no upper bound.',
+                    $this->getRuleName()
+                ))
                     ->build(),
             ];
         }
@@ -155,7 +164,10 @@ final readonly class FixedUpperBoundOnLoopsRule implements NasastanRule
         }
 
         return [
-            RuleErrorBuilder::message('While/do-while loop must have a verifiable fixed upper bound to prevent runaway code.')
+            RuleErrorBuilder::message(sprintf(
+                '%s: While/do-while loop must have a verifiable fixed upper bound to prevent runaway code.',
+                $this->getRuleName()
+            ))
                 ->build(),
         ];
     }
@@ -198,7 +210,8 @@ final readonly class FixedUpperBoundOnLoopsRule implements NasastanRule
             if ($arraySize > $this->maxAllowedIterations) {
                 return [
                     RuleErrorBuilder::message(sprintf(
-                        'Foreach loop iterates over %d items, which exceeds the configured maximum of %d iterations.',
+                        '%s: Foreach loop iterates over %d items, which exceeds the configured maximum of %d iterations.',
+                        $this->getRuleName(),
                         $arraySize,
                         $this->maxAllowedIterations
                     ))->build(),
@@ -214,7 +227,10 @@ final readonly class FixedUpperBoundOnLoopsRule implements NasastanRule
 
         // For generators or other iterables, we can't guarantee a bound
         return [
-            RuleErrorBuilder::message('Foreach loop must iterate over a countable collection with a verifiable size bound.')
+            RuleErrorBuilder::message(sprintf(
+                '%s: Foreach loop must iterate over a countable collection with a verifiable size bound.',
+                $this->getRuleName()
+            ))
                 ->build(),
         ];
     }
