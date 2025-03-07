@@ -14,7 +14,7 @@ use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\New_;
 use PhpParser\Node\Name;
 use PHPStan\Analyser\Scope;
-use PHPStan\Rules\Rule;
+use PHPStan\Reflection\Php\PhpFunctionFromParserNodeReflection;
 use PHPStan\Rules\RuleErrorBuilder;
 use PHPStan\Type\ObjectType;
 
@@ -105,7 +105,7 @@ final class NoHeapAllocationAfterInitRule implements NasastanRule
     private function isApprovedInitializationMethod(Scope $scope): bool
     {
         $function = $scope->getFunction();
-        if (! $function instanceof \PHPStan\Reflection\Php\PhpFunctionFromParserNodeReflection) {
+        if (! $function instanceof PhpFunctionFromParserNodeReflection) {
             return false;
         }
 
@@ -120,6 +120,7 @@ final class NoHeapAllocationAfterInitRule implements NasastanRule
     private function isDynamicContainerMethod(string $methodName, Scope $scope, MethodCall $node): bool
     {
         // List of container methods that allocate memory
+        // TODO: put this in configuration
         $containerMethods = [
             'add',
             'push',
@@ -127,7 +128,6 @@ final class NoHeapAllocationAfterInitRule implements NasastanRule
             'insert',
             'put',
             'set',
-            // Add more container methods that allocate memory
         ];
 
         if (! in_array($methodName, $containerMethods, true)) {
@@ -137,12 +137,12 @@ final class NoHeapAllocationAfterInitRule implements NasastanRule
         // Check if the called object is a container type
         $calledOnType = $scope->getType($node->var);
 
+        // TODO: put this in configuration
         $containerClasses = [
             'SplDoublyLinkedList',
             'SplStack',
             'SplQueue',
             'ArrayObject',
-            // Add more container classes as needed
         ];
 
         return array_any($containerClasses, fn ($containerClass): bool => $calledOnType->accepts(new ObjectType($containerClass), true)->yes());
