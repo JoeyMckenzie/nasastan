@@ -1,0 +1,37 @@
+{
+    "name": "joeymckenzie/examples",
+    "description": "An example package using nasastan rules.",
+    "type": "library",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Joeymckenzie\\Examples\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Joey McKenzie",
+            "email": "joey.mckenzie27@gmail.com"
+        }
+    ],
+    "repositories": [
+        {
+            "type": "path",
+            "url": "../"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require-dev": {
+        "phpstan/phpstan": "^2.0",
+        "phpstan/extension-installer": "^1.4",
+        "joeymckenzie/nasastan": "*"
+    },
+    "scripts": {
+        "lint": "vendor/bin/phpstan analyze"
+    },
+    "config": {
+        "allow-plugins": {
+            "phpstan/extension-installer": true
+        }
+    }
+}

@@ -26,39 +26,85 @@ parameters:
         includeComments: true
         includeBlankLines: true
 
+        # Rule 5: Minimum number of assertions per function
+        minimumAssertionsRequired: 2
+        assertionFunctions:
+            - assert
+            - assertNotNull
+            - assertEquals
+            - assertSame
+            - assertGreaterThan
+            - assertInstanceOf
+        assertionMethods:
+            - assertTrue
+            - assertFalse
+            - assertCount
+            - assertNotEmpty
+            - assertNull
+            - assertContains
+        exceptionThrowingFunctions:
+            - trigger_error
+            - throw
+            - new Exception
+            - new \Exception
+            - new Error
+            - new \Error
+
 parametersSchema:
     nasastan: structure([
-        maxAllowedIterations: schema(int(), nullable())
-        functionSizeLimit: schema(int(), nullable())
+        # Rule 2
+        maxAllowedIterations: int()
+        functionSizeLimit: int()
+
+        # Rule 3
         allowedInitMethods: arrayOf(string())
         resourceAllocationFunctions: arrayOf(string())
+
+        # Rule 4
         maxLinesPerFunction: integer()
         includeComments: bool()
         includeBlankLines: bool()
+
+        # Rule 5
+        minimumAssertionsRequired: int()
+        assertionFunctions: arrayOf(string())
+        assertionMethods: arrayOf(string())
+        exceptionThrowingFunctions: arrayOf(string())
     ])
 
 services:
     -
         class: Nasastan\NasastanConfiguration
         arguments:
-            functionSizeLimit: %nasastan.functionSizeLimit%
-            allowedInitMethods: %nasastan.initMethods%
-            resourceAllocationFunctions: %nasastan.initMethods%
-        tags:
-            - phpstan.rules.rule
-
-    -
-        class: Nasastan\NasastanConfiguration
-        arguments:
             maxAllowedIterations: %nasastan.maxAllowedIterations%
-        tags:
-            - phpstan.rules.rule
-
-    -
-        class: Nasastan\NasastanConfiguration
-        arguments:
+            allowedInitMethods: %nasastan.allowedInitMethods%
+            resourceAllocationFunctions: %nasastan.resourceAllocationFunctions%
             maxLines: %nasastan.maxLinesPerFunction%
             includeComments: %nasastan.includeComments%
             includeBlankLines: %nasastan.includeBlankLines%
+            minimumAssertionsRequired: %nasastan.minimumAssertionsRequired%
+            assertionFunctions: %nasastan.assertionFunctions%
+            assertionMethods: %nasastan.assertionMethods%
+            exceptionThrowingFunctions: %nasastan.exceptionThrowingFunctions%
+
+    # Register the rule classes
+    -
+        class: Nasastan\Rules\FixedUpperBoundOnLoopsRule
+        tags:
+            - phpstan.rules.rule
+    -
+        class: Nasastan\Rules\MinimumAssertionsPerFunctionRule
+        tags:
+            - phpstan.rules.rule
+    -
+        class: Nasastan\Rules\NoComplexFlowConstructsRule
+        tags:
+            - phpstan.rules.rule
+    -
+        class: Nasastan\Rules\NoHeapAllocationAfterInitRule
+        tags:
+            - phpstan.rules.rule
+    -
+        class: Nasastan\Rules\RestrictFunctionLengthRule
         tags:
             - phpstan.rules.rule
