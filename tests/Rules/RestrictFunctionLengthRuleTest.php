@@ -32,8 +32,8 @@ final class RestrictFunctionLengthRuleTest extends NasastanRuleTestCase
     {
         $this->analyse([__DIR__.'/../Examples/Rule_4/FunctionLengthInvalid.php'], [
             [
-                'NASA Power of Ten Rule #4: Method "reallyLongMethod" has 67 lines which exceeds the maximum of 60 lines (single printed page).',
-                75,
+                'NASA Power of Ten Rule #4: Method "reallyLongMethod" has 63 lines which exceeds the maximum of 60 lines (single printed page).',
+                65,
             ],
         ]);
     }
@@ -46,12 +46,12 @@ final class RestrictFunctionLengthRuleTest extends NasastanRuleTestCase
 
         $this->analyse([__DIR__.'/../Examples/Rule_4/FunctionLengthInvalid.php'], [
             [
-                'NASA Power of Ten Rule #4: Method "longMethod" has 44 lines which exceeds the maximum of 20 lines (single printed page).',
+                'NASA Power of Ten Rule #4: Method "longMethod" has 34 lines which exceeds the maximum of 20 lines (single printed page).',
                 27,
             ],
             [
-                'NASA Power of Ten Rule #4: Method "reallyLongMethod" has 67 lines which exceeds the maximum of 20 lines (single printed page).',
-                75,
+                'NASA Power of Ten Rule #4: Method "reallyLongMethod" has 63 lines which exceeds the maximum of 20 lines (single printed page).',
+                65,
             ],
         ]);
     }
@@ -68,8 +68,8 @@ final class RestrictFunctionLengthRuleTest extends NasastanRuleTestCase
 
         $this->analyse([__DIR__.'/../Examples/Rule_4/FunctionLengthInvalid.php'], [
             [
-                'NASA Power of Ten Rule #4: Method "reallyLongMethod" has 53 lines which exceeds the maximum of 30 lines (single printed page).',
-                75,
+                'NASA Power of Ten Rule #4: Method "reallyLongMethod" has 49 lines which exceeds the maximum of 30 lines (single printed page).',
+                65,
             ],
         ]);
     }
