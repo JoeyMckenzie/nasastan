@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Nasastan\Rules;
 
 use Exception;
+use Nasastan\NasastanConfiguration;
 use Nasastan\NasastanException;
 use Nasastan\NasastanRule;
 use PhpParser\Node;
@@ -27,7 +28,12 @@ use PHPStan\Type\ObjectType;
  */
 final readonly class FixedUpperBoundOnLoopsRule implements NasastanRule
 {
-    public function __construct(private int $maxAllowedIterations = 10000) {}
+    private int $maxAllowedIterations;
+
+    public function __construct(NasastanConfiguration $configuration)
+    {
+        $this->maxAllowedIterations = $configuration->maxAllowedIterations;
+    }
 
     public function getNodeType(): string
     {

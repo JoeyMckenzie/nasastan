@@ -1,18 +1,27 @@
 parameters:
     nasastan:
         functionSizeLimit: 60
-        initMethods:
+        allowedInitMethods:
             - __construct
             - initialize
             - init
             - setup
             - boot
             - register
+        resourceAllocationFunctions:
+            - fopen
+            - curl_init
+            - stream_socket_client
+            - fsockopen
+            - tmpfile
+            - imagecreate
+            - imagecreatetruecolor
 
 parametersSchema:
     nasastan: structure([
         functionSizeLimit: schema(int(), nullable())
-        initMethods: listOf(string())
+        allowedInitMethods: arrayOf(string())
+        resourceAllocationFunctions: arrayOf(string())
     ])
 
 services:
@@ -20,15 +29,5 @@ services:
         class: Nasastan\NasastanConfiguration
         arguments:
             functionSizeLimit: %nasastan.functionSizeLimit%
-            initMethods: %nasastan.initMethods%
-
-    -
-        class: Nasastan\NasastanExtension
-        tags:
-            - phpstan.rules.rule
-
-    # If you still want to register individual rules that can be selectively enabled/disabled
-    -
-        class: Nasastan\Rules\NoComplexFlowConstructsRule
-        tags:
-            - phpstan.rules.rule
+            allowedInitMethods: %nasastan.initMethods%
+            resourceAllocationFunctions: %nasastan.initMethods%

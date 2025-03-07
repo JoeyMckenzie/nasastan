@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Rules;
 
+use Nasastan\NasastanConfiguration;
 use Nasastan\Rules\FixedUpperBoundOnLoopsRule;
 use PhpParser\Node\Stmt;
 use PHPStan\Rules\Rule;
@@ -20,7 +21,8 @@ final class FixedUpperBoundOnLoopsRuleTest extends NasastanRuleTestCase
 
     protected function setUp(): void
     {
-        $this->rule = new FixedUpperBoundOnLoopsRule(100);
+        $configuration = new NasastanConfiguration(maxAllowedIterations: 100);
+        $this->rule = new FixedUpperBoundOnLoopsRule($configuration);
     }
 
     #[Test]
