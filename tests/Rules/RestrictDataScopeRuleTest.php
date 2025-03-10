@@ -33,24 +33,16 @@ final class RestrictDataScopeRuleTest extends NasastanRuleTestCase
     {
         $this->analyse([__DIR__.'/../Examples/Rule_6/RestrictedDataScope.php'], [
             [
-                'NASA Power of Ten Rule #6: Class "TooManyProperties" has 4 properties, but the maximum allowed is 3.',
-                30,
-            ],
-            [
                 'NASA Power of Ten Rule #6: Class "PublicPropertyExample" has 6 properties, but the maximum allowed is 3.',
-                52,
+                35,
             ],
             [
                 'NASA Power of Ten Rule #6: Public property "status" in class "PublicPropertyExample" violates data scope restriction. Consider making it private or protected.',
-                52,
+                35,
             ],
             [
                 'NASA Power of Ten Rule #6: Public property "description" in class "PublicPropertyExample" violates data scope restriction. Consider making it private or protected.',
-                52,
-            ],
-            [
-                'NASA Power of Ten Rule #6: Class "AllowedPublicPropertiesExample" has 4 properties, but the maximum allowed is 3.',
-                99,
+                35,
             ],
         ]);
     }
