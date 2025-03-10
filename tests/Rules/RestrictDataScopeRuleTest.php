@@ -17,7 +17,7 @@ use Tests\NasastanRuleTestCase;
  */
 final class RestrictDataScopeRuleTest extends NasastanRuleTestCase
 {
-    private readonly RestrictDataScopeRule $rule;
+    private RestrictDataScopeRule $rule;
 
     protected function setUp(): void
     {
@@ -43,6 +43,61 @@ final class RestrictDataScopeRuleTest extends NasastanRuleTestCase
             [
                 'NASA Power of Ten Rule #6: Public property "description" in class "PublicPropertyExample" violates data scope restriction. Consider making it private or protected.',
                 35,
+            ],
+        ]);
+    }
+
+    #[Test]
+    public function test_wildcard_pattern_matching(): void
+    {
+        $configuration = new NasastanConfiguration(
+            maxClassProperties: 10,
+            allowedPublicProperties: ['id', 'user_*', '*_date', '*_id']
+        );
+
+        $this->rule = new RestrictDataScopeRule($configuration);
+
+        $this->analyse([__DIR__.'/../Examples/Rule_6/PatternMatching.php'], [
+            [
+                'NASA Power of Ten Rule #6: Public property "name" in class "PatternMatching" violates data scope restriction. Consider making it private or protected.',
+                10,
+            ],
+            [
+                'NASA Power of Ten Rule #6: Public property "description" in class "PatternMatching" violates data scope restriction. Consider making it private or protected.',
+                10,
+            ],
+        ]);
+    }
+
+    #[Test]
+    public function test_class_based_edge_cases(): void
+    {
+        $configuration = new NasastanConfiguration(
+            maxClassProperties: 5,
+            allowedPublicProperties: []
+        );
+
+        $this->rule = new RestrictDataScopeRule($configuration);
+
+        $this->analyse([__DIR__.'/../Examples/Rule_6/EdgeCases.php'], [
+            [
+                'NASA Power of Ten Rule #6: Public property "prop" in class "EmptyClass" violates data scope restriction. Consider making it private or protected.',
+                11,
+            ],
+            // Anonymous class with too many properties
+            [
+                '#NASA Power of Ten Rule #6: Class "AnonymousClass[a-z0-9]+" has 6 properties, but the maximum allowed is 5\.#',
+                22,
+            ],
+            // Anonymous class with disallowed public property
+            [
+                '#NASA Power of Ten Rule #6: Public property "publicProp" in class "AnonymousClass[a-z0-9]+" violates data scope restriction\. Consider making it private or protected\.#',
+                53,
+            ],
+            // Abstract class with disallowed public property
+            [
+                'NASA Power of Ten Rule #6: Public property "publicProp" in class "AbstractClass" violates data scope restriction. Consider making it private or protected.',
+                86,
             ],
         ]);
     }
