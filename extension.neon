@@ -108,3 +108,15 @@ services:
         class: Nasastan\Rules\RestrictFunctionLengthRule
         tags:
             - phpstan.rules.rule
+    -
+        class: Nasastan\Rules\RestrictDataScopeRule
+        tags:
+            - phpstan.rules.rule
+    -
+        class: Nasastan\Rules\NoGlobalVariablesRule
+        tags:
+            - phpstan.rules.rule
+    -
+        class: Nasastan\Rules\VariableScopeRule
+        tags:
+            - phpstan.rules.rule
