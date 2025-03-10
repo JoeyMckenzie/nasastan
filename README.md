@@ -1,6 +1,6 @@
 <div align="center" style="padding-top: 2rem;">
     <img src="art/astronaut.png" height="400" width="400" alt="logo"/>
-    <div style="display: inline-block; padding-top: 4rem">
+    <div style="display: inline-block; margin-top: 4rem">
         <img src="https://img.shields.io/packagist/v/hetzner-cloud-php/client.svg?style=flat-square" alt="packgist downloads" />
         <img src="https://img.shields.io/github/actions/workflow/status/hetzner-cloud-php/client/run-tests.yml?branch=main&label=tests&style=flat-square" alt="tests ci" />
         <img src="https://img.shields.io/github/actions/workflow/status/hetzner-cloud-php/client/fix-php-code-style-issues.yml?branch=main&label=code%20style&style=flat-square" alt="packgist downloads" />
