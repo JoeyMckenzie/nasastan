@@ -79,7 +79,7 @@ final readonly class FixedUpperBoundOnLoopsRule implements NasastanRule
     /**
      * Checks for loops for upper-bound conditions.
      *
-     * @return array<int, RuleError>
+     * @return RuleError[]
      *
      * @throws ShouldNotHappenException
      */
