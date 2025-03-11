@@ -50,6 +50,25 @@ parameters:
             - new Error
             - new \Error
 
+        # Rule 6: Restrict scope of data as small as possible
+        maxClassProperties: 10
+        allowedGlobalVars:
+            - _GET
+            - _POST
+            - _SESSION
+            - _COOKIE
+            - _SERVER
+            - _ENV
+            - _FILES
+            - _REQUEST
+        allowedPublicProperties:
+            - id
+            - name
+            - created_at
+            - updated_at
+        maxLinesToFirstUse: 10
+
+
 parametersSchema:
     nasastan: structure([
         # Rule 2
@@ -70,6 +89,12 @@ parametersSchema:
         assertionFunctions: arrayOf(string())
         assertionMethods: arrayOf(string())
         exceptionThrowingFunctions: arrayOf(string())
+
+        # Rule 6
+        maxClassProperties: int()
+        allowedGlobalVars: arrayOf(string())
+        allowedPublicProperties: arrayOf(string())
+        maxLinesToFirstUse: int()
     ])
 
 services:
@@ -86,6 +111,10 @@ services:
             assertionFunctions: %nasastan.assertionFunctions%
             assertionMethods: %nasastan.assertionMethods%
             exceptionThrowingFunctions: %nasastan.exceptionThrowingFunctions%
+            maxClassProperties: %nasastan.maxClassProperties%
+            allowedGlobalVars: %nasastan.allowedGlobalVars%
+            allowedPublicProperties: %nasastan.allowedPublicProperties%
+            maxLinesToFirstUse: %nasastan.maxLinesToFirstUse%
 
     # Register the rule classes
     -
