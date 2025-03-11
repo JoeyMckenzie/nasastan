@@ -5,13 +5,16 @@ declare(strict_types=1);
 namespace Nasastan\Rules;
 
 use Nasastan\NasastanConfiguration;
+use Nasastan\NasastanException;
 use Nasastan\NasastanRule;
 use Nasastan\Rules\Concerns\HasNodeClassType;
+use Override;
 use PhpParser\Node;
 use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\Node\Stmt\Function_;
 use PHPStan\Analyser\Scope;
 use PHPStan\Rules\RuleErrorBuilder;
+use PHPStan\ShouldNotHappenException;
 
 /**
  * Rule #4: Restrict functions to a single printed page.
@@ -35,16 +38,15 @@ final class RestrictFunctionLengthRule implements NasastanRule
         $this->includeComments = $configuration->includeComments;
     }
 
-    public function getRuleName(): string
-    {
-        return 'NASA Power of Ten Rule #4';
-    }
-
     public function getRuleDescriptor(): string
     {
         return 'Restrict functions to a single printed page.';
     }
 
+    /**
+     * @throws NasastanException
+     */
+    #[Override]
     public function processNode(Node $node, Scope $scope): array
     {
         // Only need to consider class methods and functions
@@ -91,36 +93,53 @@ final class RestrictFunctionLengthRule implements NasastanRule
         if ($totalLines > $this->maxLines) {
             $nodeType = $node instanceof ClassMethod ? 'Method' : 'Function';
 
-            return [
-                RuleErrorBuilder::message(
-                    sprintf(
-                        'NASA Power of Ten Rule #4: %s "%s" has %d lines which exceeds the maximum of %d lines (single printed page).',
-                        $nodeType,
-                        $functionName,
-                        $totalLines,
-                        $this->maxLines
-                    )
-                )->build(),
-            ];
+            try {
+                return [
+                    RuleErrorBuilder::message(
+                        sprintf(
+                            'NASA Power of Ten Rule #4: %s "%s" has %d lines which exceeds the maximum of %d lines (single printed page).',
+                            $nodeType,
+                            $functionName,
+                            $totalLines,
+                            $this->maxLines
+                        )
+                    )->build(),
+                ];
+            } catch (ShouldNotHappenException $e) {
+                throw NasastanException::from($this->getRuleName(), $e);
+            }
         }
 
         return [];
     }
 
+    public function getRuleName(): string
+    {
+        return 'NASA Power of Ten Rule #4';
+    }
+
+    /**
+     * Gets the string content from the file we're currently analyzing, useful for checking for comments/whitespace.
+     */
     private function getFileContent(Scope $scope): ?string
     {
         $file = $scope->getFile();
 
+        // We've got bigger problems if the file we're currently analyzing doesn't exist - not even sure this can happen
         if (! file_exists($file)) {
             return null;
         }
 
         $contents = file_get_contents($file);
 
-        return $contents === false ? null : $contents;
+        return $contents === false
+            ? null
+            : $contents;
     }
 
     /**
+     * Counts the number of comments in the current section of the file.
+     *
      * @param  string[]  $lines
      */
     private function countCommentLines(array $lines): int
@@ -165,6 +184,8 @@ final class RestrictFunctionLengthRule implements NasastanRule
     }
 
     /**
+     * Counts the number of blank lines in the current file.
+     *
      * @param  string[]  $lines
      */
     private function countBlankLines(array $lines): int

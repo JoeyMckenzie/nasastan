@@ -8,6 +8,7 @@ use Exception;
 use Nasastan\NasastanConfiguration;
 use Nasastan\NasastanException;
 use Nasastan\NasastanRule;
+use Override;
 use PhpParser\Node;
 use PhpParser\Node\Expr;
 use PhpParser\Node\Stmt\Do_;
@@ -45,6 +46,7 @@ final readonly class FixedUpperBoundOnLoopsRule implements NasastanRule
      *
      * @throws NasastanException
      */
+    #[Override]
     public function processNode(Node $node, Scope $scope): array
     {
         try {
@@ -60,7 +62,7 @@ final readonly class FixedUpperBoundOnLoopsRule implements NasastanRule
                 return $this->checkForeachLoop($node, $scope);
             }
         } catch (Exception $e) {
-            throw new NasastanException($this->getRuleName(), $e);
+            throw NasastanException::from($this->getRuleName(), $e);
         }
 
         return [];
@@ -96,7 +98,7 @@ final readonly class FixedUpperBoundOnLoopsRule implements NasastanRule
             ];
         }
 
-        // Check if the condition has a fixed upper bound
+        // Check if the condition has a fixed upper bound, in which case no further analysis is needed
         if (array_any($node->cond, fn (Expr $loopCondition): bool => $this->hasFixedUpperBound($loopCondition, $scope))) {
             return [];
         }
@@ -193,7 +195,9 @@ final readonly class FixedUpperBoundOnLoopsRule implements NasastanRule
     }
 
     /**
-     * @return array<int, RuleError>
+     * Checks a foreach loop to verify an upper bound can be detected.
+     *
+     * @return RuleError[]
      *
      * @throws ShouldNotHappenException
      */
@@ -201,9 +205,10 @@ final readonly class FixedUpperBoundOnLoopsRule implements NasastanRule
     {
         $exprType = $scope->getType($node->expr);
 
-        // Arrays with known size are inherently bounded
+        // Arrays with known size are inherently bounded, so we should be able to determine their upper bound
         $constantArrays = $exprType->getConstantArrays();
 
+        // Roll through the arrays, checking each arrays size against the configured limit
         foreach ($constantArrays as $value) {
             $arraySize = count($value->getKeyTypes());
 
@@ -220,8 +225,11 @@ final readonly class FixedUpperBoundOnLoopsRule implements NasastanRule
         }
 
         // Check if it's a countable object or array type
-        if (new ObjectType('Countable')->isSuperTypeOf($exprType)->yes() || $exprType->isArray()->yes()) {
-            // We can't statically guarantee the size, but it's likely bounded
+        $objectIsCountable = new ObjectType('Countable')->isSuperTypeOf($exprType)->yes();
+        $expressionTypeIsArray = $exprType->isArray()->yes();
+
+        if ($objectIsCountable || $expressionTypeIsArray) {
+            // We can't statically guarantee the size, but we'll likely assume it's bounded
             return [];
         }
 

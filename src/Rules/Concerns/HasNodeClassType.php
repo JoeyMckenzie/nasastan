@@ -7,7 +7,7 @@ namespace Nasastan\Rules\Concerns;
 use PhpParser\Node;
 
 /**
- * Signals that a rule must handle multiple nodes and statements from parsed from the AST.
+ * Signals that a rule will handle multiple nodes and statements from parsed from the AST.
  *
  * @internal
  */

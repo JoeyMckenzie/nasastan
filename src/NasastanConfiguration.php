@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Nasastan;
 
+/**
+ * Global configuration for Nasastan rules based on the current PHPStan configuration file.
+ */
 final class NasastanConfiguration
 {
     /**

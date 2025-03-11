@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace Nasastan\Rules;
 
 use Nasastan\NasastanConfiguration;
+use Nasastan\NasastanException;
 use Nasastan\NasastanRule;
 use Nasastan\Rules\Concerns\HasNodeClassType;
+use Override;
 use PhpParser\Node;
 use PhpParser\Node\Expr\Assign;
 use PhpParser\Node\Expr\Variable;
@@ -16,6 +18,7 @@ use PhpParser\NodeFinder;
 use PHPStan\Analyser\Scope;
 use PHPStan\Rules\RuleError;
 use PHPStan\Rules\RuleErrorBuilder;
+use PHPStan\ShouldNotHappenException;
 
 /**
  * Rule #6 (Part 3): Variables should be declared in the smallest possible scope.
@@ -33,12 +36,15 @@ final class VariableScopeRule implements NasastanRule
         $this->maxLinesToFirstUse = $configuration->maxLinesToFirstUse;
     }
 
+    #[Override]
     public function processNode(Node $node, Scope $scope): array
     {
+        // We only need to verify variable scope within methods and functions - probably could extend this if needed
         if ($node instanceof ClassMethod || $node instanceof Function_) {
             $isAbstractOrWithoutStatements = $node instanceof ClassMethod && ($node->isAbstract() || $node->stmts === null);
             $withoutStatements = ! isset($node->stmts);
 
+            // Skip abstract methods and body-less functions
             if ($isAbstractOrWithoutStatements || $withoutStatements) {
                 return [];
             }
@@ -64,9 +70,11 @@ final class VariableScopeRule implements NasastanRule
     }
 
     /**
-     * Check if variables are initialized too far from their first use.
+     * Checks if variables are initialized too far from their first use.
      *
      * @param  RuleError[]  $errors
+     *
+     * @throws NasastanException
      */
     private function checkVariableInitializationAndUsage(ClassMethod|Function_ $node, array &$errors): void
     {
@@ -86,7 +94,7 @@ final class VariableScopeRule implements NasastanRule
                         continue;
                     }
 
-                    // Record the line of assignment
+                    // Record the line of assignment, so we can diff it later
                     if (! isset($variableAssignments[$variableName])) {
                         $variableAssignments[$variableName] = [
                             'assignment' => $assignment,
@@ -96,11 +104,12 @@ final class VariableScopeRule implements NasastanRule
                 }
             }
 
-            // Find all variable usages
+            // Find all variable usages within the current scope so we can check the distance from initialization to usage
             $usages = $nodeFinder->findInstanceOf($node->stmts, Variable::class);
             $variableFirstUsage = [];
 
             foreach ($usages as $usage) {
+                // If we have a simple variable name (not a lambda), do the recording of first/last line
                 if (is_string($usage->name)) {
                     $variableName = $usage->name;
 
@@ -123,7 +132,8 @@ final class VariableScopeRule implements NasastanRule
                     }
                 }
             }
-            // Check distance between assignment and first usage
+
+            // Roll through each assigned variable and check the distance to see if we need to report anything
             foreach ($variableAssignments as $variableName => $assignmentData) {
                 if (isset($variableFirstUsage[$variableName])) {
                     $usageLine = $variableFirstUsage[$variableName]['line'];
@@ -141,17 +151,21 @@ final class VariableScopeRule implements NasastanRule
                             ? $node->name->toString()
                             : ($node->namespacedName?->toString() ?? 'anonymous function');
 
-                        $errors[] = RuleErrorBuilder::message(
-                            sprintf(
-                                'NASA Power of Ten Rule #6: Variable "$%s" in %s is initialized %d lines before its first use (line %d to %d). Maximum allowed is %d lines.',
-                                $variableName,
-                                $functionName,
-                                $distance,
-                                $assignmentLine,
-                                $usageLine,
-                                $this->maxLinesToFirstUse
-                            )
-                        )->build();
+                        try {
+                            $errors[] = RuleErrorBuilder::message(
+                                sprintf(
+                                    'NASA Power of Ten Rule #6: Variable "$%s" in %s is initialized %d lines before its first use (line %d to %d). Maximum allowed is %d lines.',
+                                    $variableName,
+                                    $functionName,
+                                    $distance,
+                                    $assignmentLine,
+                                    $usageLine,
+                                    $this->maxLinesToFirstUse
+                                )
+                            )->build();
+                        } catch (ShouldNotHappenException $e) {
+                            throw NasastanException::from($this->getRuleName(), $e);
+                        }
                     }
                 }
             }
