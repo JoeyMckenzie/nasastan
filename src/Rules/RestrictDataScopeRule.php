@@ -127,27 +127,18 @@ final readonly class RestrictDataScopeRule implements NasastanRule
     }
 
     /**
-     * Check if a public property is in the allowed list
+     * Checks if a public property is in the configurable whitelist.
      *
-     * @param  array<RuleError>  $errors
+     * @param  RuleError[]  $errors
      *
      * @throws NasastanException
      */
     private function checkPublicPropertyAllowed(string $propertyName, ?string $className, array &$errors): void
     {
-        $found = false;
-
         // If any of the public props ARE NOT allowed, that's yet another error, Jack...
-        foreach ($this->allowedPublicProperties as $allowed) {
-            $matchesAllowedPropertyName = preg_match('/'.str_replace('*', '.*', $allowed).'/', $propertyName);
+        $propertyIsAllowed = array_any($this->allowedPublicProperties, fn (string $allowed): bool => preg_match('/'.str_replace('*', '.*', $allowed).'/', $propertyName) === 1);
 
-            if ($matchesAllowedPropertyName === 1) {
-                $found = true;
-                break;
-            }
-        }
-
-        if (! $found) {
+        if (! $propertyIsAllowed) {
             try {
                 $errors[] = RuleErrorBuilder::message(
                     sprintf(
