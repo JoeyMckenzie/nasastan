@@ -100,7 +100,8 @@ final readonly class RestrictDataScopeRule implements NasastanRule
 
         // Check for promoted public properties that aren't in the allowed list
         foreach ($promotedProperties as $param) {
-            // Use the modern Modifier class and perform a strict check after bitwise operation
+            // Insert meme about "I'm gonna do what's called a programmer move here" with a bitwise, checking for the public flag being set
+            // The param flags are combined, so we need to check for things like public and public static props
             if (($param->flags & Modifiers::PUBLIC) !== 0) {
                 /** @var Variable $property */
                 $property = $param->var;
