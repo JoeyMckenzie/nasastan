@@ -33,16 +33,28 @@ final class RestrictDataScopeRuleTest extends NasastanRuleTestCase
     {
         $this->analyse([__DIR__.'/../Examples/Rule_6/RestrictedDataScope.php'], [
             [
-                'NASA Power of Ten Rule #6: Class "PublicPropertyExample" has 6 properties, but the maximum allowed is 3.',
-                35,
+                'NASA Power of Ten Rule #6: Class "TooManyProperties" has 6 properties, but the maximum allowed is 3.',
+                30,
             ],
             [
-                'NASA Power of Ten Rule #6: Public property "status" in class "PublicPropertyExample" violates data scope restriction. Consider making it private or protected.',
-                35,
+                'NASA Power of Ten Rule #6: Class "TooManyPromotedPropertiesClass" has 6 properties, but the maximum allowed is 3.',
+                48,
             ],
             [
-                'NASA Power of Ten Rule #6: Public property "description" in class "PublicPropertyExample" violates data scope restriction. Consider making it private or protected.',
-                35,
+                'NASA Power of Ten Rule #6: Class "MixOfTooManyPropertiesClass" has 6 properties, but the maximum allowed is 3.',
+                65,
+            ],
+            [
+                'NASA Power of Ten Rule #6: Class "WhitelistedProperties" has 6 properties, but the maximum allowed is 3.',
+                85,
+            ],
+            [
+                'NASA Power of Ten Rule #6: Public property "status" in class "WhitelistedProperties" violates data scope restriction. Consider making it private or protected.',
+                85,
+            ],
+            [
+                'NASA Power of Ten Rule #6: Public property "description" in class "WhitelistedProperties" violates data scope restriction. Consider making it private or protected.',
+                85,
             ],
         ]);
     }
@@ -83,8 +95,9 @@ final class RestrictDataScopeRuleTest extends NasastanRuleTestCase
         // Create a map of line numbers to expected regex patterns
         $assertions = [
             10 => '/NASA Power of Ten Rule #6: Public property "prop" in class "EmptyClass" violates data scope restriction/',
-            29 => '/NASA Power of Ten Rule #6: Public property "publicProp" in class "AnonymousClass[a-z0-9]+" violates data scope restriction/',
-            49 => '/NASA Power of Ten Rule #6: Public property "publicProp" in class "AbstractClass" violates data scope restriction/',
+            21 => '/NASA Power of Ten Rule #6: Class "AnonymousClass[a-z0-9]+" has 6 properties, but the maximum allowed is 5/',
+            42 => '/NASA Power of Ten Rule #6: Public property "publicProp" in class "AnonymousClass[a-z0-9]+" violates data scope restriction/',
+            67 => '/NASA Power of Ten Rule #6: Public property "publicProp" in class "AbstractClass" violates data scope restriction/',
         ];
 
         // Ensure we have the correct number of errors

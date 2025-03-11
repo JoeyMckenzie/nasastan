@@ -18,7 +18,20 @@ final class EmptyClass
  */
 function createAnonymousClassWithTooManyProps(): object
 {
-    return new class {};
+    return new class
+    {
+        private int $prop1;
+
+        private int $prop2;
+
+        private int $prop3;
+
+        private int $prop4;
+
+        private int $prop5;
+
+        private int $prop6;
+    };
 }
 
 /**
@@ -37,8 +50,13 @@ function createAnonymousClassWithPublicProp(): object
  */
 final readonly class PromotedPropertiesClass
 {
-    public function __construct()
-    {
+    public function __construct(
+        private string $prop1,
+        private string $prop2,
+        private string $prop3,
+        private string $prop4,
+        private string $prop5,
+    ) {
         // This is fine, exactly at the limit of 5 properties
     }
 }

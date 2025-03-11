@@ -10,7 +10,8 @@
     "license": "MIT",
     "autoload": {
         "psr-4": {
-            "Nasastan\\": "src/"
+            "Nasastan\\": "src/",
+            "Examples\\": "examples/"
         }
     },
     "autoload-dev": {

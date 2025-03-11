@@ -23,4 +23,5 @@ return RectorConfig::configure()
         privatization: true,
         earlyReturn: true,
         strictBooleans: true,
-    );
+    )
+    ->withSkipPath(__DIR__.'/tests/Examples/Rule_6');

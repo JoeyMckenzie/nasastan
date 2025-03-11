@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+namespace Examples;
+
 final class NoFixedUpperBound
 {
     public function noFixedBound(): void

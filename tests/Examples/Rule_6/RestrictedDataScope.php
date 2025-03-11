@@ -27,12 +27,62 @@ interface SomeInterface
 /**
  * This class has too many properties (exceeds maxClassProperties)
  */
-final readonly class TooManyProperties {}
+final readonly class TooManyProperties
+{
+    private int $prop1;
+
+    private int $prop2;
+
+    private int $prop3;
+
+    private int $prop4;
+
+    private int $prop5;
+
+    private int $prop6;
+}
+
+/**
+ * Class with too many promoted properties from the constructor
+ */
+final readonly class TooManyPromotedPropertiesClass
+{
+    public function __construct(
+        private string $prop1,
+        private string $prop2,
+        private string $prop3,
+        private string $prop4,
+        private string $prop5,
+        private string $prop6,
+    ) {
+        // This is fine, exactly at the limit of 5 properties
+    }
+}
+
+/**
+ * Class with too many promoted properties from the constructor
+ */
+final readonly class MixOfTooManyPropertiesClass
+{
+    private string $prop1;
+
+    private string $prop2;
+
+    private string $prop3;
+
+    public function __construct(
+        private string $prop4,
+        private string $prop5,
+        private string $prop6,
+    ) {
+        // This is fine, exactly at the limit of 5 properties
+    }
+}
 
 /**
  * This class has public properties, some allowed and some not allowed
  */
-final class PublicPropertyExample
+final class WhitelistedProperties
 {
     public int $id; // This is allowed
 
