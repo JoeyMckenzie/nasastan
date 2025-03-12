@@ -8,13 +8,14 @@
     </div>
 </div>
 
-# Nasastan 🚀
+# NASAStan 🚀
 
 A PHPStan extension that enforces
 NASA's [Power of Ten](https://en.wikipedia.org/wiki/The_Power_of_10:_Rules_for_Developing_Safety-Critical_Code)
-rule in your PHP code.
+rules in your PHP code.
 
-> ⚠️ This is solely a package for self-learning. You're on your own if you use this package for the time being.
+> ⚠️ This is solely a package for self-learning and under active development. You're on your own if you use this package
+> for the time being.
 
 ## Why should I use this extension?
 
@@ -51,15 +52,6 @@ includes:
 8. Use the preprocessor only for header files and simple macros. (does not apply to PHP)
 9. Limit pointer use to a single dereference, and do not use function pointers.
 10. Compile with all possible warnings active; all warnings should then be addressed before release of the software.
-
-## PHP Adaptation
-
-Some rules are adapted to make sense in PHP:
-
-- Rule #9 (Preprocessor use) is not applicable to PHP and is implemented as strict typing requirements
-- Rule #3 (Memory allocation) checks for object instantiation outside configurable initialization methods
-- Rule #5 and #6 (Assertions) count PHP type declarations and if conditions as assertions
-- All threshold values are configurable to match your personal preferences
 
 ## References
 
