@@ -10,7 +10,9 @@
             "foreach",
             "whitespace",
             "func",
-            "expr"
+            "expr",
+            "dereference",
+            "dereferences"
         ]
     }
 }
