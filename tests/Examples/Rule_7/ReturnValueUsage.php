@@ -9,8 +9,8 @@ final class ReturnValueUsage
     public function correctUsage(): void
     {
         // Return value is used
-        $this->getNonVoidValue();
-        $this->useValue();
+        $result = $this->getNonVoidValue();
+        $this->useValue($result);
 
         // Return value is explicitly ignored with annotation
         /** @ignoreReturnValue */
@@ -39,10 +39,10 @@ final class ReturnValueUsage
         $this->getArrayValue();
 
         // Static method call with return value not used
-        $this->getStaticValue();
+        self::getStaticValue();
     }
 
-    private function getStaticValue(): int
+    private static function getStaticValue(): int
     {
         return 42;
     }
@@ -52,7 +52,10 @@ final class ReturnValueUsage
         return 'some value';
     }
 
-    private function useValue(): void
+    /**
+     * @param  mixed  $value
+     */
+    private function useValue($value): void
     {
         // Use the value
     }

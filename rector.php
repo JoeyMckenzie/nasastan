@@ -24,4 +24,4 @@ return RectorConfig::configure()
         earlyReturn: true,
         strictBooleans: true,
     )
-    ->withSkipPath(__DIR__.'/tests/Examples/Rule_6');
+    ->withSkipPath(__DIR__.'/tests/Examples');
