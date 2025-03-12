@@ -14,8 +14,7 @@ A PHPStan extension that enforces
 NASA's [Power of Ten](https://en.wikipedia.org/wiki/The_Power_of_10:_Rules_for_Developing_Safety-Critical_Code)
 rules in your PHP code.
 
-> ⚠️ This is solely a package for self-learning and under active development. You're on your own if you use this package
-> for the time being.
+> ⚠️ This is solely for self-learning and under active development. You're on your own if you it for the time being.
 
 ## Why should I use this extension?
 
@@ -49,9 +48,38 @@ includes:
 5. Use a minimum of two runtime assertions per function.
 6. Restrict the scope of data to the smallest possible.
 7. Check the return value of all non-void functions, or cast to void to indicate the return value is useless.
-8. Use the preprocessor only for header files and simple macros. (does not apply to PHP)
+8. Use the preprocessor only for header files and simple macros.
 9. Limit pointer use to a single dereference, and do not use function pointers.
 10. Compile with all possible warnings active; all warnings should then be addressed before release of the software.
+
+## Rules
+
+### Rule 1
+
+#### Avoid complex flow constructs, such as goto and recursion.
+
+Disallows the use of `goto` statements and recursive functions. The following code would be in direct violation of this
+rule and reported on by NASAStan:
+
+```php
+// ❌ Bad
+function baz(): void
+{
+    start:
+    $foo = 'bar';
+
+    goto start;  // phpstan: NASA Power of Ten Rule #1: Goto statements are not allowed.
+}
+
+function factorial(int $n): int
+{
+    if ($n <= 1) {
+        return 1;
+    }
+
+    return $n * factorial($n - 1); // phpstan: NASA Power of Ten Rule #1: Recursive method calls are not allowed. 
+}
+```
 
 ## References
 

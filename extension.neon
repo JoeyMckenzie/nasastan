@@ -99,7 +99,9 @@ parametersSchema:
         ignoreReturnValueForFunctions: arrayOf(string())
         maxAllowedDereferences: int()
         disallowedErrorSuppressingFunctions: arrayOf(string())
-        requiredDeclareDirectives: structure([])
+        requiredDeclareDirectives: structure([
+            strict_types: int()
+        ])
     ])
 
 services:
@@ -146,14 +148,6 @@ services:
             - phpstan.rules.rule
     -
         class: NASAStan\Rules\RestrictDataScopeRule
-        tags:
-            - phpstan.rules.rule
-    -
-        class: NASAStan\Rules\NoGlobalVariablesRule
-        tags:
-            - phpstan.rules.rule
-    -
-        class: NASAStan\Rules\VariableScopeRule
         tags:
             - phpstan.rules.rule
     -
