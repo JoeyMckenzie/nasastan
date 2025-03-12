@@ -34,12 +34,12 @@ final class CompileWithAllWarningsRule implements NasastanRule
     private array $disallowedErrorSuppressingFunctions;
 
     /**
-     * @var array<array-key, mixed>
+     * @var array<array-key, int>
      */
     private array $requiredDeclareDirectives;
 
     /**
-     * @var array<string, bool>
+     * @var array<array-key, bool>
      */
     private array $fileDirectivesFound = [];
 
@@ -65,7 +65,7 @@ final class CompileWithAllWarningsRule implements NasastanRule
             $this->currentFile = $filename;
             $this->fileDirectivesFound = [];
 
-            // Initialize tracking for all required directives
+            // We'll keep track of the file directives assuming each of them is missing
             foreach (array_keys($this->requiredDeclareDirectives) as $directive) {
                 $this->fileDirectivesFound[$directive] = false;
             }
@@ -98,32 +98,39 @@ final class CompileWithAllWarningsRule implements NasastanRule
 
         // Rule 3: Check for proper declare directives (strict_types, etc.)
         if ($node instanceof Declare_) {
+            // Roll through each of the declares, marking each file as checked containing a valid or invalid statement
             foreach ($node->declares as $declare) {
                 $directiveName = $declare->key->name;
+
                 if (array_key_exists($directiveName, $this->requiredDeclareDirectives)) {
                     $this->fileDirectivesFound[$directiveName] = true;
 
-                    // If there's a specific required value for this directive
+                    // Check if there's a specific required value for this directive
                     $expectedValue = $this->requiredDeclareDirectives[$directiveName];
-                    if ($expectedValue !== null && $declare->value->value !== $expectedValue) {
-                        try {
-                            $errors[] = RuleErrorBuilder::message(
-                                sprintf(
-                                    'NASA Power of Ten Rule #10: Declare directive "%s" must be set to %s.',
-                                    $directiveName,
-                                    $expectedValue
-                                )
-                            )->build();
-                        } catch (ShouldNotHappenException $e) {
-                            throw NasastanException::from($this->getRuleName(), $e);
+
+                    if ($declare->value instanceof Node\Scalar\Int_) {
+                        /** @var Node\Scalar\Int_ $value */
+                        $value = $declare->value;
+
+                        if ($value->value !== $expectedValue) {
+                            try {
+                                $errors[] = RuleErrorBuilder::message(
+                                    sprintf(
+                                        'NASA Power of Ten Rule #10: Declare directive "%s" must be set to %s.',
+                                        $directiveName,
+                                        $expectedValue
+                                    )
+                                )->build();
+                            } catch (ShouldNotHappenException $e) {
+                                throw NasastanException::from($this->getRuleName(), $e);
+                            }
                         }
                     }
                 }
             }
         }
 
-        // Check for missing directives at the file level by examining the first namespace declaration
-        // or the end of the file (using 'afterTraitUse' hook specifically for file-level validations)
+        // Check for missing directives at the file level by examining the first namespace declaration or the end of the file
         if ($node instanceof Namespace_ || $scope->isInClass()) {
             foreach (array_keys($this->requiredDeclareDirectives) as $directive) {
                 if (! $this->fileDirectivesFound[$directive]) {

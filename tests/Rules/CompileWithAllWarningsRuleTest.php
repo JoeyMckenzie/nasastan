@@ -19,7 +19,7 @@ use Tests\NasastanRuleTestCase;
 #[CoversClass(CompileWithAllWarningsRule::class)]
 final class CompileWithAllWarningsRuleTest extends NasastanRuleTestCase
 {
-    private readonly CompileWithAllWarningsRule $rule;
+    private CompileWithAllWarningsRule $rule;
 
     protected function setUp(): void
     {
@@ -52,6 +52,28 @@ final class CompileWithAllWarningsRuleTest extends NasastanRuleTestCase
                 22,
             ],
         ]);
+    }
+
+    #[Test]
+    public function test_incorrect_strict_types(): void
+    {
+        $configuration = new NasastanConfiguration(
+            requiredDeclareDirectives: ['strict_types' => 1]
+        );
+        $this->rule = new CompileWithAllWarningsRule($configuration);
+
+        $this->analyse([__DIR__.'/../Examples/Rule_10/InvalidDeclareStrictTypes.php'], [
+            [
+                'NASA Power of Ten Rule #10: Declare directive "strict_types" must be set to 1.',
+                3,
+            ],
+        ]);
+    }
+
+    #[Test]
+    public function test_correct_strict_types_value(): void
+    {
+        $this->analyse([__DIR__.'/../Examples/Rule_10/CorrectStrictTypesValue.php'], []);
     }
 
     #[Test]
