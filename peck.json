@@ -8,7 +8,9 @@
             "goto",
             "cond",
             "foreach",
-            "whitespace"
+            "whitespace",
+            "func",
+            "expr"
         ]
     }
 }
