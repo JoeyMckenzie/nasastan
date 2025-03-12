@@ -9,12 +9,14 @@ use Nasastan\Rules\RestrictDataScopeRule;
 use PhpParser\Node;
 use PHPStan\Rules\Rule;
 use PHPUnit\Framework\Assert;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\NasastanRuleTestCase;
 
 /**
  * @extends NasastanRuleTestCase<RestrictDataScopeRule>
  */
+#[CoversClass(RestrictDataScopeRule::class)]
 final class RestrictDataScopeRuleTest extends NasastanRuleTestCase
 {
     private RestrictDataScopeRule $rule;

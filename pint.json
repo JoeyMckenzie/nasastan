@@ -1,7 +1,8 @@
 {
     "preset": "laravel",
     "notPath": [
-        "src/NasastanConfiguration.php"
+        "src/NasastanConfiguration.php",
+        "tests/Examples/Rule_10/WarningSuppression.php"
     ],
     "rules": {
         "array_push": true,

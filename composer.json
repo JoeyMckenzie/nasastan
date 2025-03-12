@@ -47,6 +47,10 @@
             "@fmt",
             "XDEBUG_MODE=off vendor/bin/phpunit"
         ],
+        "test:coverage": [
+            "@fmt",
+            "vendor/bin/phpunit --coverage-text"
+        ],
         "fmt": "vendor/bin/pint",
         "fmt:test": "vendor/bin/pint --test",
         "lint": "XDEBUG_MODE=off vendor/bin/phpstan analyze",

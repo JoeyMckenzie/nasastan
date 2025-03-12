@@ -8,6 +8,7 @@ use Nasastan\NasastanConfiguration;
 use Nasastan\Rules\MinimumAssertionsPerFunctionRule;
 use PHPStan\Rules\Rule;
 use PHPUnit\Framework\Assert;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\NasastanRuleTestCase;
 use Tests\Rules\Concerns\AssertsNodeType;
@@ -15,6 +16,7 @@ use Tests\Rules\Concerns\AssertsNodeType;
 /**
  * @extends NasastanRuleTestCase<MinimumAssertionsPerFunctionRule>
  */
+#[CoversClass(MinimumAssertionsPerFunctionRule::class)]
 final class MinimumAssertionsPerFunctionRuleTest extends NasastanRuleTestCase
 {
     use AssertsNodeType;

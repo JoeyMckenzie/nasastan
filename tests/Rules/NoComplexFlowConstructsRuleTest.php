@@ -8,12 +8,14 @@ use Nasastan\Rules\NoComplexFlowConstructsRule;
 use PhpParser\Node;
 use PHPStan\Rules\Rule;
 use PHPUnit\Framework\Assert;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\NasastanRuleTestCase;
 
 /**
  * @extends NasastanRuleTestCase<NoComplexFlowConstructsRule>
  */
+#[CoversClass(NoComplexFlowConstructsRule::class)]
 final class NoComplexFlowConstructsRuleTest extends NasastanRuleTestCase
 {
     private readonly NoComplexFlowConstructsRule $rule;

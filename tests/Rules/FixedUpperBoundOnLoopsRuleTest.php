@@ -9,12 +9,14 @@ use Nasastan\Rules\FixedUpperBoundOnLoopsRule;
 use PhpParser\Node\Stmt;
 use PHPStan\Rules\Rule;
 use PHPUnit\Framework\Assert;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\NasastanRuleTestCase;
 
 /**
  * @extends NasastanRuleTestCase<FixedUpperBoundOnLoopsRule>
  */
+#[CoversClass(FixedUpperBoundOnLoopsRule::class)]
 final class FixedUpperBoundOnLoopsRuleTest extends NasastanRuleTestCase
 {
     private readonly FixedUpperBoundOnLoopsRule $rule;

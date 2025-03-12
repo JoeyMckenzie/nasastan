@@ -9,12 +9,14 @@ use Nasastan\Rules\CheckReturnValueRule;
 use PhpParser\Node\Stmt\Expression;
 use PHPStan\Rules\Rule;
 use PHPUnit\Framework\Assert;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\NasastanRuleTestCase;
 
 /**
  * @extends NasastanRuleTestCase<CheckReturnValueRule>
  */
+#[CoversClass(CheckReturnValueRule::class)]
 final class CheckReturnValueRuleTest extends NasastanRuleTestCase
 {
     private readonly CheckReturnValueRule $rule;

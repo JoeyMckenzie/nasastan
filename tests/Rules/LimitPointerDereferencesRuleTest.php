@@ -9,12 +9,14 @@ use Nasastan\Rules\LimitPointerDereferencesRule;
 use PhpParser\Node;
 use PHPStan\Rules\Rule;
 use PHPUnit\Framework\Assert;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\NasastanRuleTestCase;
 
 /**
  * @extends NasastanRuleTestCase<LimitPointerDereferencesRule>
  */
+#[CoversClass(LimitPointerDereferencesRule::class)]
 final class LimitPointerDereferencesRuleTest extends NasastanRuleTestCase
 {
     private LimitPointerDereferencesRule $rule;

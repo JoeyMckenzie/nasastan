@@ -8,6 +8,7 @@ use Nasastan\NasastanConfiguration;
 use Nasastan\Rules\RestrictFunctionLengthRule;
 use PHPStan\Rules\Rule;
 use PHPUnit\Framework\Assert;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\NasastanRuleTestCase;
 use Tests\Rules\Concerns\AssertsNodeType;
@@ -15,6 +16,7 @@ use Tests\Rules\Concerns\AssertsNodeType;
 /**
  * @extends NasastanRuleTestCase<RestrictFunctionLengthRule>
  */
+#[CoversClass(RestrictFunctionLengthRule::class)]
 final class RestrictFunctionLengthRuleTest extends NasastanRuleTestCase
 {
     use AssertsNodeType;

@@ -9,12 +9,14 @@ use Nasastan\Rules\NoHeapAllocationAfterInitRule;
 use PhpParser\Node;
 use PHPStan\Rules\Rule;
 use PHPUnit\Framework\Assert;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\NasastanRuleTestCase;
 
 /**
  * @extends NasastanRuleTestCase<NoHeapAllocationAfterInitRule>
  */
+#[CoversClass(NoHeapAllocationAfterInitRule::class)]
 final class NoHeapAllocationAfterInitRuleTest extends NasastanRuleTestCase
 {
     private readonly NoHeapAllocationAfterInitRule $rule;

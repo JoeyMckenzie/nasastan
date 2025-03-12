@@ -52,21 +52,11 @@ parameters:
 
         # Rule 6: Restrict scope of data as small as possible
         maxClassProperties: 10
-        allowedGlobalVars:
-            - _GET
-            - _POST
-            - _SESSION
-            - _COOKIE
-            - _SERVER
-            - _ENV
-            - _FILES
-            - _REQUEST
         allowedPublicProperties:
             - id
             - name
             - created_at
             - updated_at
-        maxLinesToFirstUse: 10
 
         # Rule 7: Check return value of functions
         ignoreReturnValueForFunctions:
@@ -83,38 +73,33 @@ parameters:
         # Rule 9: Limit dereferences
         maxAllowedDereferences: 1
 
+        # Rule 10: Compile with all warnings active
+        disallowedErrorSuppressingFunctions:
+            - error_reporting
+            - ini_set
+            - set_error_handler
+        requiredDeclareDirectives:
+            strict_types: 1
+
 parametersSchema:
     nasastan: structure([
-        # Rule 2
         maxAllowedIterations: int()
         functionSizeLimit: int()
-
-        # Rule 3
         allowedInitMethods: arrayOf(string())
         resourceAllocationFunctions: arrayOf(string())
-
-        # Rule 4
         maxLinesPerFunction: integer()
         includeComments: bool()
         includeBlankLines: bool()
-
-        # Rule 5
         minimumAssertionsRequired: int()
         assertionFunctions: arrayOf(string())
         assertionMethods: arrayOf(string())
         exceptionThrowingFunctions: arrayOf(string())
-
-        # Rule 6
         maxClassProperties: int()
-        allowedGlobalVars: arrayOf(string())
         allowedPublicProperties: arrayOf(string())
-        maxLinesToFirstUse: int()
-
-        # Rule 7
         ignoreReturnValueForFunctions: arrayOf(string())
-
-        # Rule 9
         maxAllowedDereferences: int()
+        disallowedErrorSuppressingFunctions: arrayOf(string())
+        requiredDeclareDirectives: structure([])
     ])
 
 services:
@@ -132,11 +117,11 @@ services:
             assertionMethods: %nasastan.assertionMethods%
             exceptionThrowingFunctions: %nasastan.exceptionThrowingFunctions%
             maxClassProperties: %nasastan.maxClassProperties%
-            allowedGlobalVars: %nasastan.allowedGlobalVars%
             allowedPublicProperties: %nasastan.allowedPublicProperties%
-            maxLinesToFirstUse: %nasastan.maxLinesToFirstUse%
             ignoreReturnValueForFunctions: %nasastan.ignoreReturnValueForFunctions%
             maxAllowedDereferences: %nasastan.maxAllowedDereferences%
+            disallowedErrorSuppressingFunctions: %nasastan.disallowedErrorSuppressingFunctions%
+            requiredDeclareDirectives: %nasastan.requiredDeclareDirectives%
 
     # Registration for rule classes, wires up the injectable configuration
     -
@@ -177,5 +162,11 @@ services:
             - phpstan.rules.rule
     -
         class: Nasastan\Rules\LimitPointerDereferencesRule
+        tags:
+            - phpstan.rules.rule
+    -
+        class: Nasastan\Rules\CompileWithAllWarningsRule
+        arguments:
+            configuration: @Nasastan\NasastanConfiguration
         tags:
             - phpstan.rules.rule

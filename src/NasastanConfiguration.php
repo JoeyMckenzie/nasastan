@@ -15,9 +15,10 @@ final class NasastanConfiguration
      * @param  string[]  $assertionFunctions
      * @param  string[]  $assertionMethods
      * @param  string[]  $exceptionThrowingFunctions
-     * @param  string[]  $allowedGlobalVars
      * @param  string[]  $allowedPublicProperties
      * @param  string[]  $ignoreReturnValueForFunctions
+     * @param  string[]  $disallowedErrorSuppressingFunctions
+     * @param  array<array-key, int>  $requiredDeclareDirectives
      */
     public function __construct(
         // Rule 2: Fixed upper bounds on loops
@@ -40,15 +41,17 @@ final class NasastanConfiguration
 
         // Rule 6: Restrict data scope
         public int $maxClassProperties = 10,
-        public array $allowedGlobalVars = ['_GET', '_POST', '_SESSION', '_COOKIE', '_SERVER', '_ENV', '_FILES', '_REQUEST'],
         public array $allowedPublicProperties = ['id', 'name', 'created_at', 'updated_at'],
-        public int $maxLinesToFirstUse = 10,
 
         // Rule 7: Check return value
         public array $ignoreReturnValueForFunctions = ['printf', 'fprintf', 'vprintf', 'error_log', 'trigger_error', 'fwrite', 'file_put_contents', 'fputcsv', 'header'],
 
         // Rule 9: Limit dereferences
-        public int $maxAllowedDereferences = 1
+        public int $maxAllowedDereferences = 1,
+
+        // Rule 10: Compile with all warnings enabled
+        public array $disallowedErrorSuppressingFunctions = ['error_reporting', 'ini_set', 'set_error_handler'],
+        public array $requiredDeclareDirectives = ['strict_types' => 1]
     ) {
         //
     }
