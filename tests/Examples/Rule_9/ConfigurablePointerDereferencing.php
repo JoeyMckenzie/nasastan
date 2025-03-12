@@ -34,12 +34,10 @@ final class ConfigurablePointerDereferencing
     {
         $foo = new stdClass();
 
-        // Proper way to handle deep chains
         $service = $foo->getService();
         $manager = $service->getManager();
         $result = $manager->process();
 
-        // Another proper way
         $service = $foo->service;
         $manager = $service->manager;
         $value = $manager->config;
