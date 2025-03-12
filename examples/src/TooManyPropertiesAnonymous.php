@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Examples;
 
-final readonly class TooManyProperties
+new readonly class
 {
     private int $prop1;
 
@@ -27,4 +27,4 @@ final readonly class TooManyProperties
     private int $prop10;
 
     private int $prop11;
-}
+};

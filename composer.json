@@ -45,11 +45,11 @@
         "prepare": "git config core.hookspath .githooks",
         "test": [
             "@fmt",
-            "vendor/bin/phpunit"
+            "XDEBUG_MODE=off vendor/bin/phpunit"
         ],
         "fmt": "vendor/bin/pint",
         "fmt:test": "vendor/bin/pint --test",
-        "lint": "vendor/bin/phpstan analyze",
+        "lint": "XDEBUG_MODE=off vendor/bin/phpstan analyze",
         "refactor": "vendor/bin/rector process",
         "refactor:test": "vendor/bin/rector process --dry-run",
         "typos": "vendor/bin/peck",

@@ -68,6 +68,18 @@ parameters:
             - updated_at
         maxLinesToFirstUse: 10
 
+        # Rule 7: Check return value of functions
+        ignoreReturnValueForFunctions:
+            - printf
+            - fprintf
+            - vprintf
+            - error_log
+            - trigger_error
+            - fwrite
+            - file_put_contents
+            - fputcsv
+            - header
+
 
 parametersSchema:
     nasastan: structure([
@@ -95,6 +107,9 @@ parametersSchema:
         allowedGlobalVars: arrayOf(string())
         allowedPublicProperties: arrayOf(string())
         maxLinesToFirstUse: int()
+
+        # Rule 7
+        ignoreReturnValueForFunctions: arrayOf(string())
     ])
 
 services:
@@ -115,8 +130,9 @@ services:
             allowedGlobalVars: %nasastan.allowedGlobalVars%
             allowedPublicProperties: %nasastan.allowedPublicProperties%
             maxLinesToFirstUse: %nasastan.maxLinesToFirstUse%
+            ignoreReturnValueForFunctions: %nasastan.ignoreReturnValueForFunctions%
 
-    # Register the rule classes
+    # Registration for rule classes, wires up the injectable configuration
     -
         class: Nasastan\Rules\FixedUpperBoundOnLoopsRule
         tags:
@@ -147,5 +163,9 @@ services:
             - phpstan.rules.rule
     -
         class: Nasastan\Rules\VariableScopeRule
+        tags:
+            - phpstan.rules.rule
+    -
+        class: Nasastan\Rules\CheckReturnValueRule
         tags:
             - phpstan.rules.rule

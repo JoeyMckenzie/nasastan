@@ -17,6 +17,7 @@ final class NasastanConfiguration
      * @param  string[]  $exceptionThrowingFunctions
      * @param  string[]  $allowedGlobalVars
      * @param  string[]  $allowedPublicProperties
+     * @param  string[]  $ignoreReturnValueForFunctions
      */
     public function __construct(
         // Rule 2: Fixed upper bounds on loops
@@ -41,7 +42,10 @@ final class NasastanConfiguration
         public int $maxClassProperties = 10,
         public array $allowedGlobalVars = ['_GET', '_POST', '_SESSION', '_COOKIE', '_SERVER', '_ENV', '_FILES', '_REQUEST'],
         public array $allowedPublicProperties = ['id', 'name', 'created_at', 'updated_at'],
-        public int $maxLinesToFirstUse = 10
+        public int $maxLinesToFirstUse = 10,
+
+        // Rule 7: Check return value
+        public array $ignoreReturnValueForFunctions = ['printf', 'fprintf', 'vprintf', 'error_log', 'trigger_error', 'fwrite', 'file_put_contents', 'fputcsv', 'header'],
     ) {
         //
     }
