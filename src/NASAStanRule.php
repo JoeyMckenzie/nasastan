@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Nasastan;
+namespace NASAStan;
 
 use PhpParser\Node;
 use PHPStan\Rules\Rule;
@@ -16,7 +16,7 @@ use PHPStan\Rules\Rule;
  *
  * @internal
  */
-interface NasastanRule extends Rule
+interface NASAStanRule extends Rule
 {
     /**
      * Name representation of the rule by order (Rule #1, Rule #2, etc.).

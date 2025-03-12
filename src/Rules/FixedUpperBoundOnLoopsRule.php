@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Nasastan\Rules;
+namespace NASAStan\Rules;
 
 use Exception;
-use Nasastan\NasastanConfiguration;
-use Nasastan\NasastanException;
-use Nasastan\NasastanRule;
+use NASAStan\NASAStanConfiguration;
+use NASAStan\NASAStanException;
+use NASAStan\NASAStanRule;
 use Override;
 use PhpParser\Node;
 use PhpParser\Node\Expr;
@@ -25,13 +25,13 @@ use PHPStan\Type\ObjectType;
 /**
  * Rule #2: All loops must have fixed bounds. This prevents runaway code.
  *
- * @implements NasastanRule<Node\Stmt>
+ * @implements NASAStanRule<Node\Stmt>
  */
-final readonly class FixedUpperBoundOnLoopsRule implements NasastanRule
+final readonly class FixedUpperBoundOnLoopsRule implements NASAStanRule
 {
     private int $maxAllowedIterations;
 
-    public function __construct(NasastanConfiguration $configuration)
+    public function __construct(NASAStanConfiguration $configuration)
     {
         $this->maxAllowedIterations = $configuration->maxAllowedIterations;
     }
@@ -42,7 +42,7 @@ final readonly class FixedUpperBoundOnLoopsRule implements NasastanRule
     }
 
     /**
-     * @throws NasastanException
+     * @throws NASAStanException
      */
     #[Override]
     public function processNode(Node $node, Scope $scope): array
@@ -60,7 +60,7 @@ final readonly class FixedUpperBoundOnLoopsRule implements NasastanRule
                 return $this->checkForeachLoop($node, $scope);
             }
         } catch (Exception $e) {
-            throw NasastanException::from($this->getRuleName(), $e);
+            throw NASAStanException::from($this->getRuleName(), $e);
         }
 
         return [];

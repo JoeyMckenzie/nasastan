@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Nasastan\Rules\Concerns;
+namespace NASAStan\Rules\Concerns;
 
 use PhpParser\Node;
 

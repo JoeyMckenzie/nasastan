@@ -4,26 +4,26 @@ declare(strict_types=1);
 
 namespace Tests\Rules;
 
-use Nasastan\NasastanConfiguration;
-use Nasastan\Rules\RestrictDataScopeRule;
+use NASAStan\NASAStanConfiguration;
+use NASAStan\Rules\RestrictDataScopeRule;
 use PhpParser\Node;
 use PHPStan\Rules\Rule;
 use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
-use Tests\NasastanRuleTestCase;
+use Tests\NASAStanRuleTestCase;
 
 /**
- * @extends NasastanRuleTestCase<RestrictDataScopeRule>
+ * @extends NASAStanRuleTestCase<RestrictDataScopeRule>
  */
 #[CoversClass(RestrictDataScopeRule::class)]
-final class RestrictDataScopeRuleTest extends NasastanRuleTestCase
+final class RestrictDataScopeRuleTest extends NASAStanRuleTestCase
 {
     private RestrictDataScopeRule $rule;
 
     protected function setUp(): void
     {
-        $configuration = new NasastanConfiguration(
+        $configuration = new NASAStanConfiguration(
             maxClassProperties: 3,
             allowedPublicProperties: ['id', 'name', 'created_*', 'updated_*']
         );
@@ -64,7 +64,7 @@ final class RestrictDataScopeRuleTest extends NasastanRuleTestCase
     #[Test]
     public function test_wildcard_pattern_matching(): void
     {
-        $configuration = new NasastanConfiguration(
+        $configuration = new NASAStanConfiguration(
             maxClassProperties: 10,
             allowedPublicProperties: ['id', 'user_*', '*_date', '*_id']
         );
@@ -86,7 +86,7 @@ final class RestrictDataScopeRuleTest extends NasastanRuleTestCase
     #[Test]
     public function test_class_based_edge_cases(): void
     {
-        $configuration = new NasastanConfiguration(
+        $configuration = new NASAStanConfiguration(
             maxClassProperties: 5,
             allowedPublicProperties: []
         );

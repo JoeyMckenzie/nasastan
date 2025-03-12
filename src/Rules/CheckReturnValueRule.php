@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Nasastan\Rules;
+namespace NASAStan\Rules;
 
-use Nasastan\NasastanConfiguration;
-use Nasastan\NasastanException;
-use Nasastan\NasastanRule;
+use NASAStan\NASAStanConfiguration;
+use NASAStan\NASAStanException;
+use NASAStan\NASAStanRule;
 use Override;
 use PhpParser\Node;
 use PhpParser\Node\Expr\FuncCall;
@@ -21,14 +21,14 @@ use PHPStan\Type\MixedType;
 /**
  * Rule #7: Check the return value of all non-void functions, or cast to void to indicate the return value is useless.
  *
- * @implements NasastanRule<Node\Stmt\Expression>
+ * @implements NASAStanRule<Node\Stmt\Expression>
  */
-final readonly class CheckReturnValueRule implements NasastanRule
+final readonly class CheckReturnValueRule implements NASAStanRule
 {
     /** @var string[] */
     private array $ignoredFunctions;
 
-    public function __construct(NasastanConfiguration $configuration)
+    public function __construct(NASAStanConfiguration $configuration)
     {
         $this->ignoredFunctions = $configuration->ignoreReturnValueForFunctions;
     }
@@ -39,7 +39,7 @@ final readonly class CheckReturnValueRule implements NasastanRule
     }
 
     /**
-     * @throws NasastanException
+     * @throws NASAStanException
      */
     #[Override]
     public function processNode(Node $node, Scope $scope): array
@@ -84,7 +84,7 @@ final readonly class CheckReturnValueRule implements NasastanRule
                 )->build(),
             ];
         } catch (ShouldNotHappenException $e) {
-            throw NasastanException::from($this->getRuleName(), $e);
+            throw NASAStanException::from($this->getRuleName(), $e);
         }
     }
 

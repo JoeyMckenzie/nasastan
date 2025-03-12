@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Nasastan\Rules;
+namespace NASAStan\Rules;
 
-use Nasastan\NasastanException;
-use Nasastan\NasastanRule;
-use Nasastan\Rules\Concerns\HasNodeClassType;
+use NASAStan\NASAStanException;
+use NASAStan\NASAStanRule;
+use NASAStan\Rules\Concerns\HasNodeClassType;
 use Override;
 use PhpParser\Node;
 use PhpParser\Node\Expr\FuncCall;
@@ -20,14 +20,14 @@ use PHPStan\ShouldNotHappenException;
 /**
  * Rule #1: No complex flow constructs. This rule detects use of goto statements and recursion.
  *
- * @implements NasastanRule<Node>
+ * @implements NASAStanRule<Node>
  */
-final class NoComplexFlowConstructsRule implements NasastanRule
+final class NoComplexFlowConstructsRule implements NASAStanRule
 {
     use HasNodeClassType;
 
     /**
-     * @throws NasastanException
+     * @throws NASAStanException
      */
     #[Override]
     public function processNode(Node $node, Scope $scope): array
@@ -40,7 +40,7 @@ final class NoComplexFlowConstructsRule implements NasastanRule
                         ->build(),
                 ];
             } catch (ShouldNotHappenException $e) {
-                throw NasastanException::from($this->getRuleName(), $e);
+                throw NASAStanException::from($this->getRuleName(), $e);
             }
         }
 
@@ -65,7 +65,7 @@ final class NoComplexFlowConstructsRule implements NasastanRule
                             ->build(),
                     ];
                 } catch (ShouldNotHappenException $e) {
-                    throw NasastanException::from($this->getRuleName(), $e);
+                    throw NASAStanException::from($this->getRuleName(), $e);
                 }
             }
         }
@@ -91,7 +91,7 @@ final class NoComplexFlowConstructsRule implements NasastanRule
                             ->build(),
                     ];
                 } catch (ShouldNotHappenException $e) {
-                    throw NasastanException::from($this->getRuleName(), $e);
+                    throw NASAStanException::from($this->getRuleName(), $e);
                 }
             }
         }
@@ -123,7 +123,7 @@ final class NoComplexFlowConstructsRule implements NasastanRule
                                 ->build(),
                         ];
                     } catch (ShouldNotHappenException $e) {
-                        throw NasastanException::from($this->getRuleName(), $e);
+                        throw NASAStanException::from($this->getRuleName(), $e);
                     }
                 }
             }

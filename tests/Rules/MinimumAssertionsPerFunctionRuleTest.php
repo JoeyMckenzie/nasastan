@@ -4,20 +4,20 @@ declare(strict_types=1);
 
 namespace Tests\Rules;
 
-use Nasastan\NasastanConfiguration;
-use Nasastan\Rules\MinimumAssertionsPerFunctionRule;
+use NASAStan\NASAStanConfiguration;
+use NASAStan\Rules\MinimumAssertionsPerFunctionRule;
 use PHPStan\Rules\Rule;
 use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
-use Tests\NasastanRuleTestCase;
+use Tests\NASAStanRuleTestCase;
 use Tests\Rules\Concerns\AssertsNodeType;
 
 /**
- * @extends NasastanRuleTestCase<MinimumAssertionsPerFunctionRule>
+ * @extends NASAStanRuleTestCase<MinimumAssertionsPerFunctionRule>
  */
 #[CoversClass(MinimumAssertionsPerFunctionRule::class)]
-final class MinimumAssertionsPerFunctionRuleTest extends NasastanRuleTestCase
+final class MinimumAssertionsPerFunctionRuleTest extends NASAStanRuleTestCase
 {
     use AssertsNodeType;
 
@@ -25,7 +25,7 @@ final class MinimumAssertionsPerFunctionRuleTest extends NasastanRuleTestCase
 
     protected function setUp(): void
     {
-        $configuration = new NasastanConfiguration();
+        $configuration = new NASAStanConfiguration();
         $this->rule = new MinimumAssertionsPerFunctionRule($configuration);
     }
 

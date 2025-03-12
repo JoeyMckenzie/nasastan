@@ -104,7 +104,7 @@ parametersSchema:
 
 services:
     -
-        class: Nasastan\NasastanConfiguration
+        class: NASAStan\NASAStanConfiguration
         arguments:
             maxAllowedIterations: %nasastan.maxAllowedIterations%
             allowedInitMethods: %nasastan.allowedInitMethods%
@@ -125,48 +125,46 @@ services:
 
     # Registration for rule classes, wires up the injectable configuration
     -
-        class: Nasastan\Rules\FixedUpperBoundOnLoopsRule
+        class: NASAStan\Rules\FixedUpperBoundOnLoopsRule
         tags:
             - phpstan.rules.rule
     -
-        class: Nasastan\Rules\MinimumAssertionsPerFunctionRule
+        class: NASAStan\Rules\MinimumAssertionsPerFunctionRule
         tags:
             - phpstan.rules.rule
     -
-        class: Nasastan\Rules\NoComplexFlowConstructsRule
+        class: NASAStan\Rules\NoComplexFlowConstructsRule
         tags:
             - phpstan.rules.rule
     -
-        class: Nasastan\Rules\NoHeapAllocationAfterInitRule
+        class: NASAStan\Rules\NoHeapAllocationAfterInitRule
         tags:
             - phpstan.rules.rule
     -
-        class: Nasastan\Rules\RestrictFunctionLengthRule
+        class: NASAStan\Rules\RestrictFunctionLengthRule
         tags:
             - phpstan.rules.rule
     -
-        class: Nasastan\Rules\RestrictDataScopeRule
+        class: NASAStan\Rules\RestrictDataScopeRule
         tags:
             - phpstan.rules.rule
     -
-        class: Nasastan\Rules\NoGlobalVariablesRule
+        class: NASAStan\Rules\NoGlobalVariablesRule
         tags:
             - phpstan.rules.rule
     -
-        class: Nasastan\Rules\VariableScopeRule
+        class: NASAStan\Rules\VariableScopeRule
         tags:
             - phpstan.rules.rule
     -
-        class: Nasastan\Rules\CheckReturnValueRule
+        class: NASAStan\Rules\CheckReturnValueRule
         tags:
             - phpstan.rules.rule
     -
-        class: Nasastan\Rules\LimitPointerDereferencesRule
+        class: NASAStan\Rules\LimitPointerDereferencesRule
         tags:
             - phpstan.rules.rule
     -
-        class: Nasastan\Rules\CompileWithAllWarningsRule
-        arguments:
-            configuration: @Nasastan\NasastanConfiguration
+        class: NASAStan\Rules\CompileWithAllWarningsRule
         tags:
             - phpstan.rules.rule

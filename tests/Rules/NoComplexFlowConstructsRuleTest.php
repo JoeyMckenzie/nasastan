@@ -4,19 +4,19 @@ declare(strict_types=1);
 
 namespace Tests\Rules;
 
-use Nasastan\Rules\NoComplexFlowConstructsRule;
+use NASAStan\Rules\NoComplexFlowConstructsRule;
 use PhpParser\Node;
 use PHPStan\Rules\Rule;
 use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
-use Tests\NasastanRuleTestCase;
+use Tests\NASAStanRuleTestCase;
 
 /**
- * @extends NasastanRuleTestCase<NoComplexFlowConstructsRule>
+ * @extends NASAStanRuleTestCase<NoComplexFlowConstructsRule>
  */
 #[CoversClass(NoComplexFlowConstructsRule::class)]
-final class NoComplexFlowConstructsRuleTest extends NasastanRuleTestCase
+final class NoComplexFlowConstructsRuleTest extends NASAStanRuleTestCase
 {
     private readonly NoComplexFlowConstructsRule $rule;
 

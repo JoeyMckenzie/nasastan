@@ -10,7 +10,7 @@
     "license": "MIT",
     "autoload": {
         "psr-4": {
-            "Nasastan\\": "src/",
+            "NASAStan\\": "src/",
             "Examples\\": "examples/"
         }
     },
@@ -67,6 +67,10 @@
             "@refactor:test",
             "@test",
             "@typos"
+        ],
+        "check": [
+            "@fix",
+            "@ci"
         ]
     },
     "config": {

@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Nasastan;
+namespace NASAStan;
 
 /**
- * Global configuration for Nasastan rules based on the current PHPStan configuration file.
+ * Global configuration for NASAStan rules based on the current PHPStan configuration file.
  */
-final class NasastanConfiguration
+final class NASAStanConfiguration
 {
     /**
      * @param  string[]  $allowedInitMethods

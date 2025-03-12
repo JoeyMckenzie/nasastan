@@ -4,26 +4,26 @@ declare(strict_types=1);
 
 namespace Tests\Rules;
 
-use Nasastan\NasastanConfiguration;
-use Nasastan\Rules\CompileWithAllWarningsRule;
+use NASAStan\NASAStanConfiguration;
+use NASAStan\Rules\CompileWithAllWarningsRule;
 use PhpParser\Node;
 use PHPStan\Rules\Rule;
 use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
-use Tests\NasastanRuleTestCase;
+use Tests\NASAStanRuleTestCase;
 
 /**
- * @extends NasastanRuleTestCase<CompileWithAllWarningsRule>
+ * @extends NASAStanRuleTestCase<CompileWithAllWarningsRule>
  */
 #[CoversClass(CompileWithAllWarningsRule::class)]
-final class CompileWithAllWarningsRuleTest extends NasastanRuleTestCase
+final class CompileWithAllWarningsRuleTest extends NASAStanRuleTestCase
 {
     private CompileWithAllWarningsRule $rule;
 
     protected function setUp(): void
     {
-        $configuration = new NasastanConfiguration();
+        $configuration = new NASAStanConfiguration();
         $this->rule = new CompileWithAllWarningsRule($configuration);
     }
 
@@ -57,7 +57,7 @@ final class CompileWithAllWarningsRuleTest extends NasastanRuleTestCase
     #[Test]
     public function test_incorrect_strict_types(): void
     {
-        $configuration = new NasastanConfiguration(
+        $configuration = new NASAStanConfiguration(
             requiredDeclareDirectives: ['strict_types' => 1]
         );
         $this->rule = new CompileWithAllWarningsRule($configuration);

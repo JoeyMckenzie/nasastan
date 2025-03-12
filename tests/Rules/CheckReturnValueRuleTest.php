@@ -4,26 +4,26 @@ declare(strict_types=1);
 
 namespace Tests\Rules;
 
-use Nasastan\NasastanConfiguration;
-use Nasastan\Rules\CheckReturnValueRule;
+use NASAStan\NASAStanConfiguration;
+use NASAStan\Rules\CheckReturnValueRule;
 use PhpParser\Node\Stmt\Expression;
 use PHPStan\Rules\Rule;
 use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
-use Tests\NasastanRuleTestCase;
+use Tests\NASAStanRuleTestCase;
 
 /**
- * @extends NasastanRuleTestCase<CheckReturnValueRule>
+ * @extends NASAStanRuleTestCase<CheckReturnValueRule>
  */
 #[CoversClass(CheckReturnValueRule::class)]
-final class CheckReturnValueRuleTest extends NasastanRuleTestCase
+final class CheckReturnValueRuleTest extends NASAStanRuleTestCase
 {
     private readonly CheckReturnValueRule $rule;
 
     protected function setUp(): void
     {
-        $configuration = new NasastanConfiguration();
+        $configuration = new NASAStanConfiguration();
         $this->rule = new CheckReturnValueRule($configuration);
     }
 

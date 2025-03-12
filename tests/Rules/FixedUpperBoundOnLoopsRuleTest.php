@@ -4,26 +4,26 @@ declare(strict_types=1);
 
 namespace Tests\Rules;
 
-use Nasastan\NasastanConfiguration;
-use Nasastan\Rules\FixedUpperBoundOnLoopsRule;
+use NASAStan\NASAStanConfiguration;
+use NASAStan\Rules\FixedUpperBoundOnLoopsRule;
 use PhpParser\Node\Stmt;
 use PHPStan\Rules\Rule;
 use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
-use Tests\NasastanRuleTestCase;
+use Tests\NASAStanRuleTestCase;
 
 /**
- * @extends NasastanRuleTestCase<FixedUpperBoundOnLoopsRule>
+ * @extends NASAStanRuleTestCase<FixedUpperBoundOnLoopsRule>
  */
 #[CoversClass(FixedUpperBoundOnLoopsRule::class)]
-final class FixedUpperBoundOnLoopsRuleTest extends NasastanRuleTestCase
+final class FixedUpperBoundOnLoopsRuleTest extends NASAStanRuleTestCase
 {
     private readonly FixedUpperBoundOnLoopsRule $rule;
 
     protected function setUp(): void
     {
-        $configuration = new NasastanConfiguration(maxAllowedIterations: 100);
+        $configuration = new NASAStanConfiguration(maxAllowedIterations: 100);
         $this->rule = new FixedUpperBoundOnLoopsRule($configuration);
     }
 

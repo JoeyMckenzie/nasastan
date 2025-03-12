@@ -6,14 +6,14 @@ parameters:
     reportUnmatchedIgnoredErrors: true
     ignoreErrors:
         -
-            message: '#Method Nasastan\\Rules\\[a-zA-Z]+::processNode\(\) should return list<PHPStan\\Rules\\IdentifierRuleError> but returns array{PHPStan\\Rules\\RuleError}.#'
+            message: '#Method NASAStan\\Rules\\[a-zA-Z]+::processNode\(\) should return list<PHPStan\\Rules\\IdentifierRuleError> but returns array{PHPStan\\Rules\\RuleError}.#'
             paths:
                 - src/Rules/*.php
         -
-            message: '#Method Nasastan\\Rules\\[a-zA-Z]+::processNode\(\) should return list<PHPStan\\Rules\\IdentifierRuleError> but returns array<PHPStan\\Rules\\RuleError>.#'
+            message: '#Method NASAStan\\Rules\\[a-zA-Z]+::processNode\(\) should return list<PHPStan\\Rules\\IdentifierRuleError> but returns array<PHPStan\\Rules\\RuleError>.#'
             paths:
                 - src/Rules/*.php
         -
-            message: '#Method Nasastan\\Rules\\[a-zA-Z]+::processNode\(\) should return list<PHPStan\\Rules\\IdentifierRuleError> but returns list<PHPStan\\Rules\\RuleError>.#'
+            message: '#Method NASAStan\\Rules\\[a-zA-Z]+::processNode\(\) should return list<PHPStan\\Rules\\IdentifierRuleError> but returns list<PHPStan\\Rules\\RuleError>.#'
             paths:
                 - src/Rules/*.php

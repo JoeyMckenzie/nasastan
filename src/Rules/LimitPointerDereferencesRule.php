@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Nasastan\Rules;
+namespace NASAStan\Rules;
 
-use Nasastan\NasastanConfiguration;
-use Nasastan\NasastanException;
-use Nasastan\NasastanRule;
-use Nasastan\Rules\Concerns\HasNodeClassType;
+use NASAStan\NASAStanConfiguration;
+use NASAStan\NASAStanException;
+use NASAStan\NASAStanRule;
+use NASAStan\Rules\Concerns\HasNodeClassType;
 use Override;
 use PhpParser\Node;
 use PhpParser\Node\Expr\ArrayDimFetch;
@@ -24,21 +24,21 @@ use PHPStan\ShouldNotHappenException;
 /**
  * Rule #9: Limit pointer use to a single dereference, and do not use function pointers.
  *
- * @implements NasastanRule<Node>
+ * @implements NASAStanRule<Node>
  */
-final class LimitPointerDereferencesRule implements NasastanRule
+final class LimitPointerDereferencesRule implements NASAStanRule
 {
     use HasNodeClassType;
 
     private int $maxAllowedDereferences;
 
-    public function __construct(NasastanConfiguration $configuration)
+    public function __construct(NASAStanConfiguration $configuration)
     {
         $this->maxAllowedDereferences = $configuration->maxAllowedDereferences;
     }
 
     /**
-     * @throws NasastanException
+     * @throws NASAStanException
      */
     #[Override]
     public function processNode(Node $node, Scope $scope): array
@@ -59,7 +59,7 @@ final class LimitPointerDereferencesRule implements NasastanRule
                         )->build(),
                     ];
                 } catch (ShouldNotHappenException $e) {
-                    throw NasastanException::from($this->getRuleName(), $e);
+                    throw NASAStanException::from($this->getRuleName(), $e);
                 }
             }
         }
@@ -80,7 +80,7 @@ final class LimitPointerDereferencesRule implements NasastanRule
                         )->build(),
                     ];
                 } catch (ShouldNotHappenException $e) {
-                    throw NasastanException::from($this->getRuleName(), $e);
+                    throw NASAStanException::from($this->getRuleName(), $e);
                 }
             }
         }
@@ -100,7 +100,7 @@ final class LimitPointerDereferencesRule implements NasastanRule
                         )->build(),
                     ];
                 } catch (ShouldNotHappenException $e) {
-                    throw NasastanException::from($this->getRuleName(), $e);
+                    throw NASAStanException::from($this->getRuleName(), $e);
                 }
             }
         }
@@ -114,7 +114,7 @@ final class LimitPointerDereferencesRule implements NasastanRule
                     )->build(),
                 ];
             } catch (ShouldNotHappenException $e) {
-                throw NasastanException::from($this->getRuleName(), $e);
+                throw NASAStanException::from($this->getRuleName(), $e);
             }
         }
 
@@ -127,7 +127,7 @@ final class LimitPointerDereferencesRule implements NasastanRule
                     )->build(),
                 ];
             } catch (ShouldNotHappenException $e) {
-                throw NasastanException::from($this->getRuleName(), $e);
+                throw NASAStanException::from($this->getRuleName(), $e);
             }
         }
 
@@ -151,7 +151,7 @@ final class LimitPointerDereferencesRule implements NasastanRule
                                 )->build(),
                             ];
                         } catch (ShouldNotHappenException $e) {
-                            throw NasastanException::from($this->getRuleName(), $e);
+                            throw NASAStanException::from($this->getRuleName(), $e);
                         }
                     }
                 }
@@ -174,7 +174,7 @@ final class LimitPointerDereferencesRule implements NasastanRule
                         )->build(),
                     ];
                 } catch (ShouldNotHappenException $e) {
-                    throw NasastanException::from($this->getRuleName(), $e);
+                    throw NASAStanException::from($this->getRuleName(), $e);
                 }
             }
         }

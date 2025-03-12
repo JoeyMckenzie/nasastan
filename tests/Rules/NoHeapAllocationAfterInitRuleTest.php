@@ -4,26 +4,26 @@ declare(strict_types=1);
 
 namespace Tests\Rules;
 
-use Nasastan\NasastanConfiguration;
-use Nasastan\Rules\NoHeapAllocationAfterInitRule;
+use NASAStan\NASAStanConfiguration;
+use NASAStan\Rules\NoHeapAllocationAfterInitRule;
 use PhpParser\Node;
 use PHPStan\Rules\Rule;
 use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
-use Tests\NasastanRuleTestCase;
+use Tests\NASAStanRuleTestCase;
 
 /**
- * @extends NasastanRuleTestCase<NoHeapAllocationAfterInitRule>
+ * @extends NASAStanRuleTestCase<NoHeapAllocationAfterInitRule>
  */
 #[CoversClass(NoHeapAllocationAfterInitRule::class)]
-final class NoHeapAllocationAfterInitRuleTest extends NasastanRuleTestCase
+final class NoHeapAllocationAfterInitRuleTest extends NASAStanRuleTestCase
 {
     private readonly NoHeapAllocationAfterInitRule $rule;
 
     protected function setUp(): void
     {
-        $configuration = new NasastanConfiguration();
+        $configuration = new NASAStanConfiguration();
         $this->rule = new NoHeapAllocationAfterInitRule($configuration);
     }
 

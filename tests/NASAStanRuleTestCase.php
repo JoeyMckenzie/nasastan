@@ -4,16 +4,16 @@ declare(strict_types=1);
 
 namespace Tests;
 
-use Nasastan\NasastanRule;
+use NASAStan\NASAStanRule;
 use PHPStan\Testing\RuleTestCase;
 use PHPUnit\Framework\Attributes\Test;
 
 /**
- * @template TRule of NasastanRule
+ * @template TRule of NASAStanRule
  *
  * @extends RuleTestCase<TRule>
  */
-abstract class NasastanRuleTestCase extends RuleTestCase
+abstract class NASAStanRuleTestCase extends RuleTestCase
 {
     #[Test]
     abstract public function test_rule_name(): void;

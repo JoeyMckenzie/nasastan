@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Nasastan;
+namespace NASAStan;
 
 use Exception;
 use Throwable;
@@ -10,7 +10,7 @@ use Throwable;
 /**
  * An error that occurs during analysis from one of the registered Nasastan rules.
  */
-final class NasastanException extends Exception
+final class NASAStanException extends Exception
 {
     private function __construct(string $ruleName, ?Throwable $previous = null)
     {

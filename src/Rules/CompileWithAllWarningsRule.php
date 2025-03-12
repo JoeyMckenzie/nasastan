@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Nasastan\Rules;
+namespace NASAStan\Rules;
 
-use Nasastan\NasastanConfiguration;
-use Nasastan\NasastanException;
-use Nasastan\NasastanRule;
-use Nasastan\Rules\Concerns\HasNodeClassType;
+use NASAStan\NASAStanConfiguration;
+use NASAStan\NASAStanException;
+use NASAStan\NASAStanRule;
+use NASAStan\Rules\Concerns\HasNodeClassType;
 use Override;
 use PhpParser\Node;
 use PhpParser\Node\Expr\ErrorSuppress;
@@ -22,9 +22,9 @@ use PHPStan\ShouldNotHappenException;
 /**
  * Rule #10: Compile with all possible warnings active; all warnings should then be addressed before release of the software.
  *
- * @implements NasastanRule<Node>
+ * @implements NASAStanRule<Node>
  */
-final class CompileWithAllWarningsRule implements NasastanRule
+final class CompileWithAllWarningsRule implements NASAStanRule
 {
     use HasNodeClassType;
 
@@ -45,14 +45,14 @@ final class CompileWithAllWarningsRule implements NasastanRule
 
     private ?string $currentFile = null;
 
-    public function __construct(NasastanConfiguration $configuration)
+    public function __construct(NASAStanConfiguration $configuration)
     {
         $this->disallowedErrorSuppressingFunctions = $configuration->disallowedErrorSuppressingFunctions;
         $this->requiredDeclareDirectives = $configuration->requiredDeclareDirectives;
     }
 
     /**
-     * @throws NasastanException
+     * @throws NASAStanException
      */
     #[Override]
     public function processNode(Node $node, Scope $scope): array
@@ -78,7 +78,7 @@ final class CompileWithAllWarningsRule implements NasastanRule
                     'NASA Power of Ten Rule #10: Error suppression operator (@) is not allowed as it hides warnings.'
                 )->build();
             } catch (ShouldNotHappenException $e) {
-                throw NasastanException::from($this->getRuleName(), $e);
+                throw NASAStanException::from($this->getRuleName(), $e);
             }
         }
 
@@ -91,7 +91,7 @@ final class CompileWithAllWarningsRule implements NasastanRule
                         sprintf('NASA Power of Ten Rule #10: Error suppressing function "%s" is not allowed.', $functionName)
                     )->build();
                 } catch (ShouldNotHappenException $e) {
-                    throw NasastanException::from($this->getRuleName(), $e);
+                    throw NASAStanException::from($this->getRuleName(), $e);
                 }
             }
         }
@@ -122,7 +122,7 @@ final class CompileWithAllWarningsRule implements NasastanRule
                                     )
                                 )->build();
                             } catch (ShouldNotHappenException $e) {
-                                throw NasastanException::from($this->getRuleName(), $e);
+                                throw NASAStanException::from($this->getRuleName(), $e);
                             }
                         }
                     }
@@ -139,7 +139,7 @@ final class CompileWithAllWarningsRule implements NasastanRule
                             sprintf('NASA Power of Ten Rule #10: Missing required declare directive "%s".', $directive)
                         )->build();
                     } catch (ShouldNotHappenException $e) {
-                        throw NasastanException::from($this->getRuleName(), $e);
+                        throw NASAStanException::from($this->getRuleName(), $e);
                     }
 
                     // Mark as found to avoid duplicate errors

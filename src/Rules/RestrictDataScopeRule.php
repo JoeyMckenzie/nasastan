@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Nasastan\Rules;
+namespace NASAStan\Rules;
 
-use Nasastan\NasastanConfiguration;
-use Nasastan\NasastanException;
-use Nasastan\NasastanRule;
+use NASAStan\NASAStanConfiguration;
+use NASAStan\NASAStanException;
+use NASAStan\NASAStanRule;
 use Override;
 use PhpParser\Modifiers;
 use PhpParser\Node;
@@ -23,9 +23,9 @@ use PHPStan\ShouldNotHappenException;
 /**
  * Rule #6: Restrict the scope of data to the smallest possible.
  *
- * @implements NasastanRule<Node\Stmt\Class_>
+ * @implements NASAStanRule<Node\Stmt\Class_>
  */
-final readonly class RestrictDataScopeRule implements NasastanRule
+final readonly class RestrictDataScopeRule implements NASAStanRule
 {
     private int $maxClassProperties;
 
@@ -34,7 +34,7 @@ final readonly class RestrictDataScopeRule implements NasastanRule
      */
     private array $allowedPublicProperties;
 
-    public function __construct(NasastanConfiguration $configuration)
+    public function __construct(NASAStanConfiguration $configuration)
     {
         $this->maxClassProperties = $configuration->maxClassProperties;
         $this->allowedPublicProperties = $configuration->allowedPublicProperties;
@@ -46,7 +46,7 @@ final readonly class RestrictDataScopeRule implements NasastanRule
     }
 
     /**
-     * @throws NasastanException
+     * @throws NASAStanException
      */
     #[Override]
     public function processNode(Node $node, Scope $scope): array
@@ -86,7 +86,7 @@ final readonly class RestrictDataScopeRule implements NasastanRule
                     )
                 )->build();
             } catch (ShouldNotHappenException $e) {
-                throw NasastanException::from($this->getRuleName(), $e);
+                throw NASAStanException::from($this->getRuleName(), $e);
             }
         }
 
@@ -131,7 +131,7 @@ final readonly class RestrictDataScopeRule implements NasastanRule
      *
      * @param  RuleError[]  $errors
      *
-     * @throws NasastanException
+     * @throws NASAStanException
      */
     private function checkPublicPropertyAllowed(string $propertyName, ?string $className, array &$errors): void
     {
@@ -148,7 +148,7 @@ final readonly class RestrictDataScopeRule implements NasastanRule
                     )
                 )->build();
             } catch (ShouldNotHappenException $e) {
-                throw NasastanException::from($this->getRuleName(), $e);
+                throw NASAStanException::from($this->getRuleName(), $e);
             }
         }
     }

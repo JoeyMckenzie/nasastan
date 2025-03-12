@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Nasastan\Rules;
+namespace NASAStan\Rules;
 
-use Nasastan\NasastanConfiguration;
-use Nasastan\NasastanException;
-use Nasastan\NasastanRule;
-use Nasastan\Rules\Concerns\HasNodeClassType;
+use NASAStan\NASAStanConfiguration;
+use NASAStan\NASAStanException;
+use NASAStan\NASAStanRule;
+use NASAStan\Rules\Concerns\HasNodeClassType;
 use Override;
 use PhpParser\Node;
 use PhpParser\Node\Expr\Array_;
@@ -24,9 +24,9 @@ use PHPStan\Type\ObjectType;
 /**
  * Rule #3: Avoid heap memory allocation after initialization.
  *
- * @implements NasastanRule<Node>
+ * @implements NASAStanRule<Node>
  */
-final class NoHeapAllocationAfterInitRule implements NasastanRule
+final class NoHeapAllocationAfterInitRule implements NASAStanRule
 {
     use HasNodeClassType;
 
@@ -36,14 +36,14 @@ final class NoHeapAllocationAfterInitRule implements NasastanRule
     /** @var array<string> */
     private array $allowedInitMethods;
 
-    public function __construct(NasastanConfiguration $configuration)
+    public function __construct(NASAStanConfiguration $configuration)
     {
         $this->allowedInitMethods = $configuration->allowedInitMethods;
         $this->resourceAllocationFunctions = $configuration->resourceAllocationFunctions;
     }
 
     /**
-     * @throws NasastanException
+     * @throws NASAStanException
      * @throws ShouldNotHappenException
      */
     #[Override]
@@ -63,7 +63,7 @@ final class NoHeapAllocationAfterInitRule implements NasastanRule
                     )->build(),
                 ];
             } catch (ShouldNotHappenException $e) {
-                throw NasastanException::from($this->getRuleName(), $e);
+                throw NASAStanException::from($this->getRuleName(), $e);
             }
         }
 
@@ -76,7 +76,7 @@ final class NoHeapAllocationAfterInitRule implements NasastanRule
                     )->build(),
                 ];
             } catch (ShouldNotHappenException $e) {
-                throw NasastanException::from($this->getRuleName(), $e);
+                throw NASAStanException::from($this->getRuleName(), $e);
             }
         }
 
@@ -91,7 +91,7 @@ final class NoHeapAllocationAfterInitRule implements NasastanRule
                         )->build(),
                     ];
                 } catch (ShouldNotHappenException $e) {
-                    throw NasastanException::from($this->getRuleName(), $e);
+                    throw NASAStanException::from($this->getRuleName(), $e);
                 }
             }
         }
@@ -108,7 +108,7 @@ final class NoHeapAllocationAfterInitRule implements NasastanRule
                         )->build(),
                     ];
                 } catch (ShouldNotHappenException $e) {
-                    throw NasastanException::from($this->getRuleName(), $e);
+                    throw NASAStanException::from($this->getRuleName(), $e);
                 }
             }
         }

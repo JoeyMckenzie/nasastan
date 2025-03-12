@@ -4,26 +4,26 @@ declare(strict_types=1);
 
 namespace Tests\Rules;
 
-use Nasastan\NasastanConfiguration;
-use Nasastan\Rules\LimitPointerDereferencesRule;
+use NASAStan\NASAStanConfiguration;
+use NASAStan\Rules\LimitPointerDereferencesRule;
 use PhpParser\Node;
 use PHPStan\Rules\Rule;
 use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
-use Tests\NasastanRuleTestCase;
+use Tests\NASAStanRuleTestCase;
 
 /**
- * @extends NasastanRuleTestCase<LimitPointerDereferencesRule>
+ * @extends NASAStanRuleTestCase<LimitPointerDereferencesRule>
  */
 #[CoversClass(LimitPointerDereferencesRule::class)]
-final class LimitPointerDereferencesRuleTest extends NasastanRuleTestCase
+final class LimitPointerDereferencesRuleTest extends NASAStanRuleTestCase
 {
     private LimitPointerDereferencesRule $rule;
 
     protected function setUp(): void
     {
-        $configuration = new NasastanConfiguration();
+        $configuration = new NASAStanConfiguration();
         $this->rule = new LimitPointerDereferencesRule($configuration);
     }
 
@@ -73,7 +73,7 @@ final class LimitPointerDereferencesRuleTest extends NasastanRuleTestCase
     #[Test]
     public function test_rule_with_two_allowed_dereferences(): void
     {
-        $configurationWithTwo = new NasastanConfiguration(
+        $configurationWithTwo = new NASAStanConfiguration(
             maxAllowedDereferences: 2
         );
         $this->rule = new LimitPointerDereferencesRule($configurationWithTwo);

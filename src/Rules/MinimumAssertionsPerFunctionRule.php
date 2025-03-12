@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Nasastan\Rules;
+namespace NASAStan\Rules;
 
-use Nasastan\NasastanConfiguration;
-use Nasastan\NasastanException;
-use Nasastan\NasastanRule;
-use Nasastan\Rules\Concerns\HasNodeClassType;
+use NASAStan\NASAStanConfiguration;
+use NASAStan\NASAStanException;
+use NASAStan\NASAStanRule;
+use NASAStan\Rules\Concerns\HasNodeClassType;
 use Override;
 use PhpParser\Node;
 use PhpParser\Node\Expr\FuncCall;
@@ -24,9 +24,9 @@ use PHPStan\ShouldNotHappenException;
 /**
  * Rule #5: Use a minimum of two runtime assertions per function.
  *
- * @implements NasastanRule<Node>
+ * @implements NASAStanRule<Node>
  */
-final class MinimumAssertionsPerFunctionRule implements NasastanRule
+final class MinimumAssertionsPerFunctionRule implements NASAStanRule
 {
     use HasNodeClassType;
 
@@ -47,7 +47,7 @@ final class MinimumAssertionsPerFunctionRule implements NasastanRule
 
     private int $minimumAssertionsRequired;
 
-    public function __construct(NasastanConfiguration $configuration)
+    public function __construct(NASAStanConfiguration $configuration)
     {
         $this->assertionFunctions = $configuration->assertionFunctions;
         $this->assertionMethods = $configuration->assertionMethods;
@@ -56,7 +56,7 @@ final class MinimumAssertionsPerFunctionRule implements NasastanRule
     }
 
     /**
-     * @throws NasastanException
+     * @throws NASAStanException
      */
     #[Override]
     public function processNode(Node $node, Scope $scope): array
@@ -91,7 +91,7 @@ final class MinimumAssertionsPerFunctionRule implements NasastanRule
                         )->build(),
                     ];
                 } catch (ShouldNotHappenException $e) {
-                    throw NasastanException::from($this->getRuleName(), $e);
+                    throw NASAStanException::from($this->getRuleName(), $e);
                 }
             }
         }

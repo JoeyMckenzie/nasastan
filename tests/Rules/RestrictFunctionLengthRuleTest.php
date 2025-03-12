@@ -4,20 +4,20 @@ declare(strict_types=1);
 
 namespace Tests\Rules;
 
-use Nasastan\NasastanConfiguration;
-use Nasastan\Rules\RestrictFunctionLengthRule;
+use NASAStan\NASAStanConfiguration;
+use NASAStan\Rules\RestrictFunctionLengthRule;
 use PHPStan\Rules\Rule;
 use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
-use Tests\NasastanRuleTestCase;
+use Tests\NASAStanRuleTestCase;
 use Tests\Rules\Concerns\AssertsNodeType;
 
 /**
- * @extends NasastanRuleTestCase<RestrictFunctionLengthRule>
+ * @extends NASAStanRuleTestCase<RestrictFunctionLengthRule>
  */
 #[CoversClass(RestrictFunctionLengthRule::class)]
-final class RestrictFunctionLengthRuleTest extends NasastanRuleTestCase
+final class RestrictFunctionLengthRuleTest extends NASAStanRuleTestCase
 {
     use AssertsNodeType;
 
@@ -25,7 +25,7 @@ final class RestrictFunctionLengthRuleTest extends NasastanRuleTestCase
 
     protected function setUp(): void
     {
-        $configuration = new NasastanConfiguration();
+        $configuration = new NASAStanConfiguration();
         $this->rule = new RestrictFunctionLengthRule($configuration);
     }
 
@@ -43,7 +43,7 @@ final class RestrictFunctionLengthRuleTest extends NasastanRuleTestCase
     #[Test]
     public function test_stricter_max_lines_rule(): void
     {
-        $configuration = new NasastanConfiguration(maxLines: 20);
+        $configuration = new NASAStanConfiguration(maxLines: 20);
         $this->rule = new RestrictFunctionLengthRule($configuration);
 
         $this->analyse([__DIR__.'/../Examples/Rule_4/FunctionLengthInvalid.php'], [
@@ -61,7 +61,7 @@ final class RestrictFunctionLengthRuleTest extends NasastanRuleTestCase
     #[Test]
     public function test_excluding_comments_and_blank_lines(): void
     {
-        $configuration = new NasastanConfiguration(
+        $configuration = new NASAStanConfiguration(
             maxLines: 30,
             includeComments: false,
             includeBlankLines: false,
