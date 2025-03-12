@@ -42,8 +42,6 @@ final readonly class FixedUpperBoundOnLoopsRule implements NasastanRule
     }
 
     /**
-     * @param  Node\Stmt  $node
-     *
      * @throws NasastanException
      */
     #[Override]

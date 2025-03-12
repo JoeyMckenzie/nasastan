@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Nasastan\Rules;
 
 use Nasastan\NasastanConfiguration;
+use Nasastan\NasastanException;
 use Nasastan\NasastanRule;
 use Nasastan\Rules\Concerns\HasNodeClassType;
 use Override;
@@ -16,6 +17,7 @@ use PhpParser\Node\Stmt\Declare_;
 use PhpParser\Node\Stmt\Namespace_;
 use PHPStan\Analyser\Scope;
 use PHPStan\Rules\RuleErrorBuilder;
+use PHPStan\ShouldNotHappenException;
 
 /**
  * Rule #10: Compile with all possible warnings active; all warnings should then be addressed before release of the software.
@@ -49,6 +51,9 @@ final class CompileWithAllWarningsRule implements NasastanRule
         $this->requiredDeclareDirectives = $configuration->requiredDeclareDirectives;
     }
 
+    /**
+     * @throws NasastanException
+     */
     #[Override]
     public function processNode(Node $node, Scope $scope): array
     {
@@ -68,18 +73,26 @@ final class CompileWithAllWarningsRule implements NasastanRule
 
         // Rule 1: Check for error suppression operator (@)
         if ($node instanceof ErrorSuppress) {
-            $errors[] = RuleErrorBuilder::message(
-                'NASA Power of Ten Rule #10: Error suppression operator (@) is not allowed as it hides warnings.'
-            )->build();
+            try {
+                $errors[] = RuleErrorBuilder::message(
+                    'NASA Power of Ten Rule #10: Error suppression operator (@) is not allowed as it hides warnings.'
+                )->build();
+            } catch (ShouldNotHappenException $e) {
+                throw NasastanException::from($this->getRuleName(), $e);
+            }
         }
 
         // Rule 2: Check for error suppression functions (error_reporting, etc.)
         if ($node instanceof FuncCall && $node->name instanceof Name) {
             $functionName = $node->name->toString();
             if (in_array($functionName, $this->disallowedErrorSuppressingFunctions, true)) {
-                $errors[] = RuleErrorBuilder::message(
-                    sprintf('NASA Power of Ten Rule #10: Error suppressing function "%s" is not allowed.', $functionName)
-                )->build();
+                try {
+                    $errors[] = RuleErrorBuilder::message(
+                        sprintf('NASA Power of Ten Rule #10: Error suppressing function "%s" is not allowed.', $functionName)
+                    )->build();
+                } catch (ShouldNotHappenException $e) {
+                    throw NasastanException::from($this->getRuleName(), $e);
+                }
             }
         }
 
@@ -93,13 +106,17 @@ final class CompileWithAllWarningsRule implements NasastanRule
                     // If there's a specific required value for this directive
                     $expectedValue = $this->requiredDeclareDirectives[$directiveName];
                     if ($expectedValue !== null && $declare->value->value !== $expectedValue) {
-                        $errors[] = RuleErrorBuilder::message(
-                            sprintf(
-                                'NASA Power of Ten Rule #10: Declare directive "%s" must be set to %s.',
-                                $directiveName,
-                                $expectedValue
-                            )
-                        )->build();
+                        try {
+                            $errors[] = RuleErrorBuilder::message(
+                                sprintf(
+                                    'NASA Power of Ten Rule #10: Declare directive "%s" must be set to %s.',
+                                    $directiveName,
+                                    $expectedValue
+                                )
+                            )->build();
+                        } catch (ShouldNotHappenException $e) {
+                            throw NasastanException::from($this->getRuleName(), $e);
+                        }
                     }
                 }
             }
@@ -110,9 +127,13 @@ final class CompileWithAllWarningsRule implements NasastanRule
         if ($node instanceof Namespace_ || $scope->isInClass()) {
             foreach (array_keys($this->requiredDeclareDirectives) as $directive) {
                 if (! $this->fileDirectivesFound[$directive]) {
-                    $errors[] = RuleErrorBuilder::message(
-                        sprintf('NASA Power of Ten Rule #10: Missing required declare directive "%s".', $directive)
-                    )->build();
+                    try {
+                        $errors[] = RuleErrorBuilder::message(
+                            sprintf('NASA Power of Ten Rule #10: Missing required declare directive "%s".', $directive)
+                        )->build();
+                    } catch (ShouldNotHappenException $e) {
+                        throw NasastanException::from($this->getRuleName(), $e);
+                    }
 
                     // Mark as found to avoid duplicate errors
                     $this->fileDirectivesFound[$directive] = true;

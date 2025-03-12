@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace Nasastan\Rules;
 
 use Nasastan\NasastanConfiguration;
+use Nasastan\NasastanException;
 use Nasastan\NasastanRule;
 use Nasastan\Rules\Concerns\HasNodeClassType;
+use Override;
 use PhpParser\Node;
 use PhpParser\Node\Expr\ArrayDimFetch;
 use PhpParser\Node\Expr\Closure;
@@ -17,6 +19,7 @@ use PhpParser\Node\Expr\StaticCall;
 use PhpParser\Node\Expr\Variable;
 use PHPStan\Analyser\Scope;
 use PHPStan\Rules\RuleErrorBuilder;
+use PHPStan\ShouldNotHappenException;
 
 /**
  * Rule #9: Limit pointer use to a single dereference, and do not use function pointers.
@@ -34,6 +37,10 @@ final class LimitPointerDereferencesRule implements NasastanRule
         $this->maxAllowedDereferences = $configuration->maxAllowedDereferences;
     }
 
+    /**
+     * @throws NasastanException
+     */
+    #[Override]
     public function processNode(Node $node, Scope $scope): array
     {
         // Check for method call chains
@@ -41,15 +48,19 @@ final class LimitPointerDereferencesRule implements NasastanRule
             $dereferences = $this->countMethodCallDereferences($node);
 
             if ($dereferences > $this->maxAllowedDereferences) {
-                return [
-                    RuleErrorBuilder::message(
-                        sprintf(
-                            'NASA Power of Ten Rule #9: Method call chains should be limited to %d dereference(s). Found %d.',
-                            $this->maxAllowedDereferences,
-                            $dereferences
-                        )
-                    )->build(),
-                ];
+                try {
+                    return [
+                        RuleErrorBuilder::message(
+                            sprintf(
+                                'NASA Power of Ten Rule #9: Method call chains should be limited to %d dereference(s). Found %d.',
+                                $this->maxAllowedDereferences,
+                                $dereferences
+                            )
+                        )->build(),
+                    ];
+                } catch (ShouldNotHappenException $e) {
+                    throw NasastanException::from($this->getRuleName(), $e);
+                }
             }
         }
 
@@ -58,15 +69,19 @@ final class LimitPointerDereferencesRule implements NasastanRule
             $dereferences = $this->countPropertyFetchDereferences($node);
 
             if ($dereferences > $this->maxAllowedDereferences) {
-                return [
-                    RuleErrorBuilder::message(
-                        sprintf(
-                            'NASA Power of Ten Rule #9: Property access chains should be limited to %d dereference(s). Found %d.',
-                            $this->maxAllowedDereferences,
-                            $dereferences
-                        )
-                    )->build(),
-                ];
+                try {
+                    return [
+                        RuleErrorBuilder::message(
+                            sprintf(
+                                'NASA Power of Ten Rule #9: Property access chains should be limited to %d dereference(s). Found %d.',
+                                $this->maxAllowedDereferences,
+                                $dereferences
+                            )
+                        )->build(),
+                    ];
+                } catch (ShouldNotHappenException $e) {
+                    throw NasastanException::from($this->getRuleName(), $e);
+                }
             }
         }
 
@@ -75,33 +90,45 @@ final class LimitPointerDereferencesRule implements NasastanRule
             $var = $node->var;
 
             if ($var instanceof PropertyFetch || $var instanceof MethodCall) {
-                return [
-                    RuleErrorBuilder::message(
-                        sprintf(
-                            'NASA Power of Ten Rule #9: Array access on property or method result exceeds allowed limit of %d dereference(s).',
-                            $this->maxAllowedDereferences
-                        )
-                    )->build(),
-                ];
+                try {
+                    return [
+                        RuleErrorBuilder::message(
+                            sprintf(
+                                'NASA Power of Ten Rule #9: Array access on property or method result exceeds allowed limit of %d dereference(s).',
+                                $this->maxAllowedDereferences
+                            )
+                        )->build(),
+                    ];
+                } catch (ShouldNotHappenException $e) {
+                    throw NasastanException::from($this->getRuleName(), $e);
+                }
             }
         }
 
         // Check for variable functions (function pointers in PHP)
         if ($node instanceof FuncCall && ! ($node->name instanceof Node\Name)) {
-            return [
-                RuleErrorBuilder::message(
-                    'NASA Power of Ten Rule #9: Variable functions (function pointers) are not allowed.'
-                )->build(),
-            ];
+            try {
+                return [
+                    RuleErrorBuilder::message(
+                        'NASA Power of Ten Rule #9: Variable functions (function pointers) are not allowed.'
+                    )->build(),
+                ];
+            } catch (ShouldNotHappenException $e) {
+                throw NasastanException::from($this->getRuleName(), $e);
+            }
         }
 
         // Check for closures (can be used as function pointers)
         if ($node instanceof Closure) {
-            return [
-                RuleErrorBuilder::message(
-                    'NASA Power of Ten Rule #9: Closures (function pointers) are not allowed.'
-                )->build(),
-            ];
+            try {
+                return [
+                    RuleErrorBuilder::message(
+                        'NASA Power of Ten Rule #9: Closures (function pointers) are not allowed.'
+                    )->build(),
+                ];
+            } catch (ShouldNotHappenException $e) {
+                throw NasastanException::from($this->getRuleName(), $e);
+            }
         }
 
         // Check for callables using array syntax
@@ -117,11 +144,15 @@ final class LimitPointerDereferencesRule implements NasastanRule
                     $isInstanceCallable = $objectValue instanceof Variable || $objectValue instanceof PropertyFetch;
 
                     if ($isInstanceCallable) {
-                        return [
-                            RuleErrorBuilder::message(
-                                'NASA Power of Ten Rule #9: Callable arrays (function pointers) are not allowed.'
-                            )->build(),
-                        ];
+                        try {
+                            return [
+                                RuleErrorBuilder::message(
+                                    'NASA Power of Ten Rule #9: Callable arrays (function pointers) are not allowed.'
+                                )->build(),
+                            ];
+                        } catch (ShouldNotHappenException $e) {
+                            throw NasastanException::from($this->getRuleName(), $e);
+                        }
                     }
                 }
             }
@@ -133,14 +164,18 @@ final class LimitPointerDereferencesRule implements NasastanRule
             $dereferences = 2;
 
             if ($dereferences > $this->maxAllowedDereferences) {
-                return [
-                    RuleErrorBuilder::message(
-                        sprintf(
-                            'NASA Power of Ten Rule #9: Method calls on static call results exceed allowed limit of %d dereference(s).',
-                            $this->maxAllowedDereferences
-                        )
-                    )->build(),
-                ];
+                try {
+                    return [
+                        RuleErrorBuilder::message(
+                            sprintf(
+                                'NASA Power of Ten Rule #9: Method calls on static call results exceed allowed limit of %d dereference(s).',
+                                $this->maxAllowedDereferences
+                            )
+                        )->build(),
+                    ];
+                } catch (ShouldNotHappenException $e) {
+                    throw NasastanException::from($this->getRuleName(), $e);
+                }
             }
         }
 

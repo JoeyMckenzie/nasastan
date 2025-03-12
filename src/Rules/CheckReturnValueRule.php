@@ -7,6 +7,7 @@ namespace Nasastan\Rules;
 use Nasastan\NasastanConfiguration;
 use Nasastan\NasastanException;
 use Nasastan\NasastanRule;
+use Override;
 use PhpParser\Node;
 use PhpParser\Node\Expr\FuncCall;
 use PhpParser\Node\Expr\MethodCall;
@@ -40,6 +41,7 @@ final readonly class CheckReturnValueRule implements NasastanRule
     /**
      * @throws NasastanException
      */
+    #[Override]
     public function processNode(Node $node, Scope $scope): array
     {
         $expr = $node->expr;
