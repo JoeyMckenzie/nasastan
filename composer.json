@@ -1,6 +1,6 @@
 {
     "name": "joeymckenzie/nasastan",
-    "description": "A PHPStan plugin to enforce NASA's Power of Ten rules.",
+    "description": "A PHPStan extension to enforce NASA's Power of Ten rules.",
     "keywords": [
         "nasa",
         "phpstan",
