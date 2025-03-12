@@ -41,16 +41,16 @@ includes:
 
 ## Original NASA Power of Ten Rules
 
-1. No complex flow constructs (no goto, setjmp, longjmp, recursion)
-2. All loops must have fixed bounds
-3. No dynamic memory allocation after initialization
-4. No function should be larger than 60 lines
-5. The assertion density should be at least 2%
-6. Objects must have at least two assertions
-7. Data objects must be declared at smallest possible level
-8. The return value of non-void functions must be checked
-9. Preprocessor use must be limited to file inclusion and simple macros
-10. All code must be compiled, from day one, with all compiler warnings enabled
+1. Avoid complex flow constructs, such as goto and recursion.
+2. All loops must have fixed bounds. This prevents runaway code.
+3. Avoid heap memory allocation after initialization.
+4. Restrict functions to a single printed page.
+5. Use a minimum of two runtime assertions per function.
+6. Restrict the scope of data to the smallest possible.
+7. Check the return value of all non-void functions, or cast to void to indicate the return value is useless.
+8. Use the preprocessor only for header files and simple macros. (does not apply to PHP)
+9. Limit pointer use to a single dereference, and do not use function pointers.
+10. Compile with all possible warnings active; all warnings should then be addressed before release of the software.
 
 ## PHP Adaptation
 

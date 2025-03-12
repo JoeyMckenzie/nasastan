@@ -46,6 +46,9 @@ final class NasastanConfiguration
 
         // Rule 7: Check return value
         public array $ignoreReturnValueForFunctions = ['printf', 'fprintf', 'vprintf', 'error_log', 'trigger_error', 'fwrite', 'file_put_contents', 'fputcsv', 'header'],
+
+        // Rule 9: Limit dereferences
+        public int $maxAllowedDereferences = 1
     ) {
         //
     }

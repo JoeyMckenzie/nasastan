@@ -80,6 +80,8 @@ parameters:
             - fputcsv
             - header
 
+        # Rule 9: Limit dereferences
+        maxAllowedDereferences: 1
 
 parametersSchema:
     nasastan: structure([
@@ -110,6 +112,9 @@ parametersSchema:
 
         # Rule 7
         ignoreReturnValueForFunctions: arrayOf(string())
+
+        # Rule 9
+        maxAllowedDereferences: int()
     ])
 
 services:
@@ -131,6 +136,7 @@ services:
             allowedPublicProperties: %nasastan.allowedPublicProperties%
             maxLinesToFirstUse: %nasastan.maxLinesToFirstUse%
             ignoreReturnValueForFunctions: %nasastan.ignoreReturnValueForFunctions%
+            maxAllowedDereferences: %nasastan.maxAllowedDereferences%
 
     # Registration for rule classes, wires up the injectable configuration
     -
@@ -167,5 +173,9 @@ services:
             - phpstan.rules.rule
     -
         class: Nasastan\Rules\CheckReturnValueRule
+        tags:
+            - phpstan.rules.rule
+    -
+        class: Nasastan\Rules\LimitPointerDereferencesRule
         tags:
             - phpstan.rules.rule
