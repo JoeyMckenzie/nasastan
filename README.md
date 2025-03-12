@@ -54,7 +54,7 @@ includes:
 
 ## Rules
 
-### Rule 1
+### Rule #1
 
 #### Avoid complex flow constructs, such as goto and recursion.
 
