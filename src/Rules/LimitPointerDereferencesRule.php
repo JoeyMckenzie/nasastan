@@ -8,6 +8,7 @@ use NASAStan\NASAStanConfiguration;
 use NASAStan\NASAStanException;
 use NASAStan\NASAStanRule;
 use NASAStan\Rules\Concerns\HasNodeClassType;
+use NASAStan\Rules\Concerns\HasRuleEnablement;
 use Override;
 use PhpParser\Node;
 use PhpParser\Node\Expr\ArrayDimFetch;
@@ -26,15 +27,14 @@ use PHPStan\ShouldNotHappenException;
  *
  * @implements NASAStanRule<Node>
  */
-final class LimitPointerDereferencesRule implements NASAStanRule
+final readonly class LimitPointerDereferencesRule implements NASAStanRule
 {
-    use HasNodeClassType;
+    use HasNodeClassType, HasRuleEnablement;
 
-    private int $maxAllowedDereferences;
-
-    public function __construct(NASAStanConfiguration $configuration)
+    public function __construct(
+        private NASAStanConfiguration $configuration)
     {
-        $this->maxAllowedDereferences = $configuration->maxAllowedDereferences;
+        //
     }
 
     /**
@@ -43,17 +43,21 @@ final class LimitPointerDereferencesRule implements NASAStanRule
     #[Override]
     public function processNode(Node $node, Scope $scope): array
     {
+        if (! $this->enabled('rule_9')) {
+            return [];
+        }
+
         // Check for method call chains
         if ($node instanceof MethodCall) {
             $dereferences = $this->countMethodCallDereferences($node);
 
-            if ($dereferences > $this->maxAllowedDereferences) {
+            if ($dereferences > $this->configuration->maxAllowedDereferences) {
                 try {
                     return [
                         RuleErrorBuilder::message(
                             sprintf(
                                 'NASA Power of Ten Rule #9: Method call chains should be limited to %d dereference(s). Found %d.',
-                                $this->maxAllowedDereferences,
+                                $this->configuration->maxAllowedDereferences,
                                 $dereferences
                             )
                         )->build(),
@@ -68,13 +72,13 @@ final class LimitPointerDereferencesRule implements NASAStanRule
         if ($node instanceof PropertyFetch) {
             $dereferences = $this->countPropertyFetchDereferences($node);
 
-            if ($dereferences > $this->maxAllowedDereferences) {
+            if ($dereferences > $this->configuration->maxAllowedDereferences) {
                 try {
                     return [
                         RuleErrorBuilder::message(
                             sprintf(
                                 'NASA Power of Ten Rule #9: Property access chains should be limited to %d dereference(s). Found %d.',
-                                $this->maxAllowedDereferences,
+                                $this->configuration->maxAllowedDereferences,
                                 $dereferences
                             )
                         )->build(),
@@ -86,7 +90,7 @@ final class LimitPointerDereferencesRule implements NASAStanRule
         }
 
         // Check for array access on property or method call result
-        if ($node instanceof ArrayDimFetch && $this->maxAllowedDereferences < 2) {
+        if ($node instanceof ArrayDimFetch && $this->configuration->maxAllowedDereferences < 2) {
             $var = $node->var;
 
             if ($var instanceof PropertyFetch || $var instanceof MethodCall) {
@@ -95,7 +99,7 @@ final class LimitPointerDereferencesRule implements NASAStanRule
                         RuleErrorBuilder::message(
                             sprintf(
                                 'NASA Power of Ten Rule #9: Array access on property or method result exceeds allowed limit of %d dereference(s).',
-                                $this->maxAllowedDereferences
+                                $this->configuration->maxAllowedDereferences
                             )
                         )->build(),
                     ];
@@ -163,13 +167,13 @@ final class LimitPointerDereferencesRule implements NASAStanRule
             // For simplicity, we'll count static calls with a method call as 2 dereferences by default
             $dereferences = 2;
 
-            if ($dereferences > $this->maxAllowedDereferences) {
+            if ($dereferences > $this->configuration->maxAllowedDereferences) {
                 try {
                     return [
                         RuleErrorBuilder::message(
                             sprintf(
                                 'NASA Power of Ten Rule #9: Method calls on static call results exceed allowed limit of %d dereference(s).',
-                                $this->maxAllowedDereferences
+                                $this->configuration->maxAllowedDereferences
                             )
                         )->build(),
                     ];

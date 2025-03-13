@@ -8,6 +8,7 @@ use NASAStan\NASAStanConfiguration;
 use NASAStan\NASAStanException;
 use NASAStan\NASAStanRule;
 use NASAStan\Rules\Concerns\HasNodeClassType;
+use NASAStan\Rules\Concerns\HasRuleEnablement;
 use Override;
 use PhpParser\Node;
 use PhpParser\Node\Expr\FuncCall;
@@ -26,34 +27,12 @@ use PHPStan\ShouldNotHappenException;
  *
  * @implements NASAStanRule<Node>
  */
-final class MinimumAssertionsPerFunctionRule implements NASAStanRule
+final readonly class MinimumAssertionsPerFunctionRule implements NASAStanRule
 {
-    use HasNodeClassType;
+    use HasNodeClassType, HasRuleEnablement;
 
-    /**
-     * @var string[]
-     */
-    private array $assertionFunctions;
-
-    /**
-     * @var string[]
-     */
-    private array $assertionMethods;
-
-    /**
-     * @var string[]
-     */
-    private array $exceptionThrowingFunctions;
-
-    private int $minimumAssertionsRequired;
-
-    public function __construct(NASAStanConfiguration $configuration)
-    {
-        $this->assertionFunctions = $configuration->assertionFunctions;
-        $this->assertionMethods = $configuration->assertionMethods;
-        $this->exceptionThrowingFunctions = $configuration->exceptionThrowingFunctions;
-        $this->minimumAssertionsRequired = $configuration->minimumAssertionsRequired;
-    }
+    public function __construct(
+        private NASAStanConfiguration $configuration) {}
 
     /**
      * @throws NASAStanException
@@ -61,6 +40,10 @@ final class MinimumAssertionsPerFunctionRule implements NASAStanRule
     #[Override]
     public function processNode(Node $node, Scope $scope): array
     {
+        if (! $this->enabled('rule_5')) {
+            return [];
+        }
+
         // No need to check interfaces or abstract methods without a body
         if ($node instanceof ClassMethod && ($node->isAbstract() || $node->stmts === null)) {
             return [];
@@ -78,7 +61,7 @@ final class MinimumAssertionsPerFunctionRule implements NASAStanRule
             // Count assertions in the function body
             $assertionsCount = $this->countAssertionsInNode($node);
 
-            if ($assertionsCount < $this->minimumAssertionsRequired) {
+            if ($assertionsCount < $this->configuration->minimumAssertionsRequired) {
                 try {
                     return [
                         RuleErrorBuilder::message(
@@ -86,7 +69,7 @@ final class MinimumAssertionsPerFunctionRule implements NASAStanRule
                                 'NASA Power of Ten Rule #5: Function "%s" contains %d assertions, but at least %d are required.',
                                 $functionName,
                                 $assertionsCount,
-                                $this->minimumAssertionsRequired
+                                $this->configuration->minimumAssertionsRequired
                             )
                         )->build(),
                     ];
@@ -124,7 +107,7 @@ final class MinimumAssertionsPerFunctionRule implements NASAStanRule
         foreach ($funcCalls as $funcCall) {
             if ($funcCall->name instanceof Node\Name) {
                 $functionName = $funcCall->name->toString();
-                if (in_array($functionName, $this->assertionFunctions, true)) {
+                if (in_array($functionName, $this->configuration->assertionFunctions, true)) {
                     $assertionCount++;
                 }
             }
@@ -137,7 +120,7 @@ final class MinimumAssertionsPerFunctionRule implements NASAStanRule
         foreach ($methodCalls as $methodCall) {
             if ($methodCall->name instanceof Node\Identifier) {
                 $methodName = $methodCall->name->toString();
-                if (in_array($methodName, $this->assertionMethods, true)) {
+                if (in_array($methodName, $this->configuration->assertionMethods, true)) {
                     $assertionCount++;
                 }
             }
@@ -150,7 +133,7 @@ final class MinimumAssertionsPerFunctionRule implements NASAStanRule
         foreach ($staticCalls as $staticCall) {
             if ($staticCall->name instanceof Node\Identifier) {
                 $methodName = $staticCall->name->toString();
-                if (in_array($methodName, $this->assertionMethods, true)) {
+                if (in_array($methodName, $this->configuration->assertionMethods, true)) {
                     $assertionCount++;
                 }
             }
@@ -175,7 +158,7 @@ final class MinimumAssertionsPerFunctionRule implements NASAStanRule
             foreach ($ifFuncCalls as $funcCall) {
                 if ($funcCall->name instanceof Node\Name) {
                     $functionName = $funcCall->name->toString();
-                    if (in_array($functionName, $this->exceptionThrowingFunctions, true)) {
+                    if (in_array($functionName, $this->configuration->exceptionThrowingFunctions, true)) {
                         $assertionCount++;
 
                         // Only count one per if statement
@@ -195,7 +178,7 @@ final class MinimumAssertionsPerFunctionRule implements NASAStanRule
             foreach ($throwCalls as $funcCall) {
                 if ($funcCall->name instanceof Node\Name) {
                     $functionName = $funcCall->name->toString();
-                    if (in_array($functionName, $this->exceptionThrowingFunctions, true)) {
+                    if (in_array($functionName, $this->configuration->exceptionThrowingFunctions, true)) {
                         $assertionCount++;
 
                         // Only count one per ternary

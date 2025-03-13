@@ -7,6 +7,7 @@ namespace NASAStan\Rules;
 use NASAStan\NASAStanConfiguration;
 use NASAStan\NASAStanException;
 use NASAStan\NASAStanRule;
+use NASAStan\Rules\Concerns\HasRuleEnablement;
 use Override;
 use PhpParser\Modifiers;
 use PhpParser\Node;
@@ -27,17 +28,12 @@ use PHPStan\ShouldNotHappenException;
  */
 final readonly class RestrictDataScopeRule implements NASAStanRule
 {
-    private int $maxClassProperties;
+    use HasRuleEnablement;
 
-    /**
-     * @var string[]
-     */
-    private array $allowedPublicProperties;
-
-    public function __construct(NASAStanConfiguration $configuration)
+    public function __construct(
+        private NASAStanConfiguration $configuration)
     {
-        $this->maxClassProperties = $configuration->maxClassProperties;
-        $this->allowedPublicProperties = $configuration->allowedPublicProperties;
+        //
     }
 
     public function getNodeType(): string
@@ -51,6 +47,10 @@ final readonly class RestrictDataScopeRule implements NASAStanRule
     #[Override]
     public function processNode(Node $node, Scope $scope): array
     {
+        if (! $this->enabled('rule_6')) {
+            return [];
+        }
+
         /** @var RuleError[] $errors */
         $errors = [];
 
@@ -75,14 +75,14 @@ final readonly class RestrictDataScopeRule implements NASAStanRule
         // Pretty simple, if we're over the max allowed class props, that's an error, Jack...
         $totalPropertyCount = count($promotedProperties) + count($classProperties);
 
-        if ($totalPropertyCount > $this->maxClassProperties) {
+        if ($totalPropertyCount > $this->configuration->maxClassProperties) {
             try {
                 $errors[] = RuleErrorBuilder::message(
                     sprintf(
                         'NASA Power of Ten Rule #6: Class "%s" has %d properties, but the maximum allowed is %d.',
                         $node->name?->toString(),
                         $totalPropertyCount,
-                        $this->maxClassProperties
+                        $this->configuration->maxClassProperties
                     )
                 )->build();
             } catch (ShouldNotHappenException $e) {
@@ -136,7 +136,7 @@ final readonly class RestrictDataScopeRule implements NASAStanRule
     private function checkPublicPropertyAllowed(string $propertyName, ?string $className, array &$errors): void
     {
         // If any of the public props ARE NOT allowed, that's yet another error, Jack...
-        $propertyIsAllowed = array_any($this->allowedPublicProperties, fn (string $allowed): bool => preg_match('/'.str_replace('*', '.*', $allowed).'/', $propertyName) === 1);
+        $propertyIsAllowed = array_any($this->configuration->allowedPublicProperties, fn (string $allowed): bool => preg_match('/'.str_replace('*', '.*', $allowed).'/', $propertyName) === 1);
 
         if (! $propertyIsAllowed) {
             try {

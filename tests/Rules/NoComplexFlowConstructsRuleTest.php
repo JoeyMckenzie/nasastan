@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Rules;
 
+use NASAStan\NASAStanConfiguration;
 use NASAStan\Rules\NoComplexFlowConstructsRule;
 use PhpParser\Node;
 use PHPStan\Rules\Rule;
@@ -18,11 +19,12 @@ use Tests\NASAStanRuleTestCase;
 #[CoversClass(NoComplexFlowConstructsRule::class)]
 final class NoComplexFlowConstructsRuleTest extends NASAStanRuleTestCase
 {
-    private readonly NoComplexFlowConstructsRule $rule;
+    private NoComplexFlowConstructsRule $rule;
 
     protected function setUp(): void
     {
-        $this->rule = new NoComplexFlowConstructsRule();
+        $configuration = new NASAStanConfiguration();
+        $this->rule = new NoComplexFlowConstructsRule($configuration);
     }
 
     #[Test]
@@ -91,6 +93,31 @@ final class NoComplexFlowConstructsRuleTest extends NASAStanRuleTestCase
     public function test_node_type(): void
     {
         Assert::assertEquals(Node::class, $this->rule->getNodeType());
+    }
+
+    #[Test]
+    public function test_not_enabled_returns_no_errors(): void
+    {
+        $configuration = new NASAStanConfiguration(
+            enabledRules: ['rule_2']
+        );
+
+        $this->rule = new NoComplexFlowConstructsRule($configuration);
+
+        $this->analyse([__DIR__.'/../Examples/Rule_1/RecursiveFunction.php'], []);
+    }
+
+    #[Test]
+    public function test_enabled_with_bypass_returns_no_errors(): void
+    {
+        $configuration = new NASAStanConfiguration(
+            enabledRules: ['rule_1'],
+            exceptRules: ['rule_1']
+        );
+
+        $this->rule = new NoComplexFlowConstructsRule($configuration);
+
+        $this->analyse([__DIR__.'/../Examples/Rule_1/RecursiveFunction.php'], []);
     }
 
     protected function getRule(): Rule

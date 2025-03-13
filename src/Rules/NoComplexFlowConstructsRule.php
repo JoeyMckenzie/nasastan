@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace NASAStan\Rules;
 
+use NASAStan\NASAStanConfiguration;
 use NASAStan\NASAStanException;
 use NASAStan\NASAStanRule;
 use NASAStan\Rules\Concerns\HasNodeClassType;
+use NASAStan\Rules\Concerns\HasRuleEnablement;
 use Override;
 use PhpParser\Node;
 use PhpParser\Node\Expr\FuncCall;
@@ -22,9 +24,15 @@ use PHPStan\ShouldNotHappenException;
  *
  * @implements NASAStanRule<Node>
  */
-final class NoComplexFlowConstructsRule implements NASAStanRule
+final readonly class NoComplexFlowConstructsRule implements NASAStanRule
 {
-    use HasNodeClassType;
+    use HasNodeClassType, HasRuleEnablement;
+
+    public function __construct(
+        private NASAStanConfiguration $configuration,
+    ) {
+        //
+    }
 
     /**
      * @throws NASAStanException
@@ -32,6 +40,10 @@ final class NoComplexFlowConstructsRule implements NASAStanRule
     #[Override]
     public function processNode(Node $node, Scope $scope): array
     {
+        if (! $this->enabled('rule_1')) {
+            return [];
+        }
+
         // First, we'll check for goto statements - pretty simple, outlaw all gotos
         if ($node instanceof Node\Stmt\Goto_) {
             try {

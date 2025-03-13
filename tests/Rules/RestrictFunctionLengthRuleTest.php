@@ -88,6 +88,31 @@ final class RestrictFunctionLengthRuleTest extends NASAStanRuleTestCase
         Assert::assertEquals('Restrict functions to a single printed page.', $this->rule->getRuleDescriptor());
     }
 
+    #[Test]
+    public function test_not_enabled_returns_no_errors(): void
+    {
+        $configuration = new NASAStanConfiguration(
+            enabledRules: ['rule_1']
+        );
+
+        $this->rule = new RestrictFunctionLengthRule($configuration);
+
+        $this->analyse([__DIR__.'/../Examples/Rule_4/FunctionLengthInvalid.php'], []);
+    }
+
+    #[Test]
+    public function test_enabled_with_bypass_returns_no_errors(): void
+    {
+        $configuration = new NASAStanConfiguration(
+            enabledRules: ['rule_4'],
+            exceptRules: ['rule_4']
+        );
+
+        $this->rule = new RestrictFunctionLengthRule($configuration);
+
+        $this->analyse([__DIR__.'/../Examples/Rule_4/FunctionLengthInvalid.php'], []);
+    }
+
     protected function getRule(): Rule
     {
         return $this->rule;

@@ -94,6 +94,31 @@ final class CompileWithAllWarningsRuleTest extends NASAStanRuleTestCase
         Assert::assertEquals(Node::class, $this->rule->getNodeType());
     }
 
+    #[Test]
+    public function test_not_enabled_returns_no_errors(): void
+    {
+        $configuration = new NASAStanConfiguration(
+            enabledRules: ['rule_1']
+        );
+
+        $this->rule = new CompileWithAllWarningsRule($configuration);
+
+        $this->analyse([__DIR__.'/../Examples/Rule_10/CorrectStrictTypesValue.php'], []);
+    }
+
+    #[Test]
+    public function test_enabled_with_bypass_returns_no_errors(): void
+    {
+        $configuration = new NASAStanConfiguration(
+            enabledRules: ['rule_10'],
+            exceptRules: ['rule_10']
+        );
+
+        $this->rule = new CompileWithAllWarningsRule($configuration);
+
+        $this->analyse([__DIR__.'/../Examples/Rule_10/CorrectStrictTypesValue.php'], []);
+    }
+
     protected function getRule(): Rule
     {
         return $this->rule;

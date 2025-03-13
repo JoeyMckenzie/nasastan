@@ -8,6 +8,7 @@ use Exception;
 use NASAStan\NASAStanConfiguration;
 use NASAStan\NASAStanException;
 use NASAStan\NASAStanRule;
+use NASAStan\Rules\Concerns\HasRuleEnablement;
 use Override;
 use PhpParser\Node;
 use PhpParser\Node\Expr;
@@ -29,11 +30,12 @@ use PHPStan\Type\ObjectType;
  */
 final readonly class FixedUpperBoundOnLoopsRule implements NASAStanRule
 {
-    private int $maxAllowedIterations;
+    use HasRuleEnablement;
 
-    public function __construct(NASAStanConfiguration $configuration)
-    {
-        $this->maxAllowedIterations = $configuration->maxAllowedIterations;
+    public function __construct(
+        private NASAStanConfiguration $configuration
+    ) {
+        //
     }
 
     public function getNodeType(): string
@@ -47,6 +49,10 @@ final readonly class FixedUpperBoundOnLoopsRule implements NASAStanRule
     #[Override]
     public function processNode(Node $node, Scope $scope): array
     {
+        if (! $this->enabled('rule_2')) {
+            return [];
+        }
+
         try {
             if ($node instanceof For_) {
                 return $this->checkForLoop($node, $scope);
@@ -120,14 +126,14 @@ final readonly class FixedUpperBoundOnLoopsRule implements NASAStanRule
 
             // Check for the simple case of index < configured upper limit where the configured upper limit is a constant
             if ($rightType instanceof ConstantIntegerType) {
-                return $rightType->getValue() <= $this->maxAllowedIterations;
+                return $rightType->getValue() <= $this->configuration->maxAllowedIterations;
             }
 
             // Next, check for constant expressions like index < COUNT or index < LIMIT
             if ($rightType->isConstantScalarValue()->yes()) {
                 $rightValue = $rightType->getConstantScalarValues()[0];
 
-                if (is_int($rightValue) && $rightValue <= $this->maxAllowedIterations) {
+                if (is_int($rightValue) && $rightValue <= $this->configuration->maxAllowedIterations) {
                     return true;
                 }
             }
@@ -206,13 +212,13 @@ final readonly class FixedUpperBoundOnLoopsRule implements NASAStanRule
         foreach ($constantArrays as $value) {
             $arraySize = count($value->getKeyTypes());
 
-            if ($arraySize > $this->maxAllowedIterations) {
+            if ($arraySize > $this->configuration->maxAllowedIterations) {
                 return [
                     RuleErrorBuilder::message(sprintf(
                         '%s: Foreach loop iterates over %d items, which exceeds the configured maximum of %d iterations.',
                         $this->getRuleName(),
                         $arraySize,
-                        $this->maxAllowedIterations
+                        $this->configuration->maxAllowedIterations
                     ))->build(),
                 ];
             }

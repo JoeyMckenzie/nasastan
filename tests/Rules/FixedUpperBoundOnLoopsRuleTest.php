@@ -19,7 +19,7 @@ use Tests\NASAStanRuleTestCase;
 #[CoversClass(FixedUpperBoundOnLoopsRule::class)]
 final class FixedUpperBoundOnLoopsRuleTest extends NASAStanRuleTestCase
 {
-    private readonly FixedUpperBoundOnLoopsRule $rule;
+    private FixedUpperBoundOnLoopsRule $rule;
 
     protected function setUp(): void
     {
@@ -135,6 +135,31 @@ final class FixedUpperBoundOnLoopsRuleTest extends NASAStanRuleTestCase
     public function test_node_type(): void
     {
         Assert::assertEquals(Stmt::class, $this->rule->getNodeType());
+    }
+
+    #[Test]
+    public function test_not_enabled_returns_no_errors(): void
+    {
+        $configuration = new NASAStanConfiguration(
+            enabledRules: ['rule_1']
+        );
+
+        $this->rule = new FixedUpperBoundOnLoopsRule($configuration);
+
+        $this->analyse([__DIR__.'/../Examples/Rule_2/ForeachGenerator.php'], []);
+    }
+
+    #[Test]
+    public function test_enabled_with_bypass_returns_no_errors(): void
+    {
+        $configuration = new NASAStanConfiguration(
+            enabledRules: ['rule_2'],
+            exceptRules: ['rule_2']
+        );
+
+        $this->rule = new FixedUpperBoundOnLoopsRule($configuration);
+
+        $this->analyse([__DIR__.'/../Examples/Rule_2/ForeachGenerator.php'], []);
     }
 
     protected function getRule(): Rule

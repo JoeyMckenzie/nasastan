@@ -152,6 +152,31 @@ final class RestrictDataScopeRuleTest extends NASAStanRuleTestCase
         Assert::assertEquals(Node\Stmt\Class_::class, $this->rule->getNodeType());
     }
 
+    #[Test]
+    public function test_not_enabled_returns_no_errors(): void
+    {
+        $configuration = new NASAStanConfiguration(
+            enabledRules: ['rule_1']
+        );
+
+        $this->rule = new RestrictDataScopeRule($configuration);
+
+        $this->analyse([__DIR__.'/../Examples/Rule_6/RestrictedDataScope.php'], []);
+    }
+
+    #[Test]
+    public function test_enabled_with_bypass_returns_no_errors(): void
+    {
+        $configuration = new NASAStanConfiguration(
+            enabledRules: ['rule_6'],
+            exceptRules: ['rule_6']
+        );
+
+        $this->rule = new RestrictDataScopeRule($configuration);
+
+        $this->analyse([__DIR__.'/../Examples/Rule_6/RestrictedDataScope.php'], []);
+    }
+
     protected function getRule(): Rule
     {
         return $this->rule;

@@ -21,7 +21,7 @@ final class MinimumAssertionsPerFunctionRuleTest extends NASAStanRuleTestCase
 {
     use AssertsNodeType;
 
-    private readonly MinimumAssertionsPerFunctionRule $rule;
+    private MinimumAssertionsPerFunctionRule $rule;
 
     protected function setUp(): void
     {
@@ -62,6 +62,31 @@ final class MinimumAssertionsPerFunctionRuleTest extends NASAStanRuleTestCase
     public function test_rule_descriptor(): void
     {
         Assert::assertEquals('Use a minimum of two runtime assertions per function.', $this->rule->getRuleDescriptor());
+    }
+
+    #[Test]
+    public function test_not_enabled_returns_no_errors(): void
+    {
+        $configuration = new NASAStanConfiguration(
+            enabledRules: ['rule_1']
+        );
+
+        $this->rule = new MinimumAssertionsPerFunctionRule($configuration);
+
+        $this->analyse([__DIR__.'/../Examples/Rule_5/MinimumAssertionsPerFunction.php'], []);
+    }
+
+    #[Test]
+    public function test_enabled_with_bypass_returns_no_errors(): void
+    {
+        $configuration = new NASAStanConfiguration(
+            enabledRules: ['rule_5'],
+            exceptRules: ['rule_5']
+        );
+
+        $this->rule = new MinimumAssertionsPerFunctionRule($configuration);
+
+        $this->analyse([__DIR__.'/../Examples/Rule_5/MinimumAssertionsPerFunction.php'], []);
     }
 
     protected function getRule(): Rule

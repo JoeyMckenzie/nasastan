@@ -19,7 +19,7 @@ use Tests\NASAStanRuleTestCase;
 #[CoversClass(CheckReturnValueRule::class)]
 final class CheckReturnValueRuleTest extends NASAStanRuleTestCase
 {
-    private readonly CheckReturnValueRule $rule;
+    private CheckReturnValueRule $rule;
 
     protected function setUp(): void
     {
@@ -49,7 +49,7 @@ final class CheckReturnValueRuleTest extends NASAStanRuleTestCase
     #[Test]
     public function test_rule_name(): void
     {
-        Assert::assertEquals('NASA Power of Ten Rule #6', $this->rule->getRuleName());
+        Assert::assertEquals('NASA Power of Ten Rule #7', $this->rule->getRuleName());
     }
 
     #[Test]
@@ -65,6 +65,31 @@ final class CheckReturnValueRuleTest extends NASAStanRuleTestCase
     public function test_node_type(): void
     {
         Assert::assertEquals(Expression::class, $this->rule->getNodeType());
+    }
+
+    #[Test]
+    public function test_not_enabled_returns_no_errors(): void
+    {
+        $configuration = new NASAStanConfiguration(
+            enabledRules: ['rule_1']
+        );
+
+        $this->rule = new CheckReturnValueRule($configuration);
+
+        $this->analyse([__DIR__.'/../Examples/Rule_7/ReturnValueUsage.php'], []);
+    }
+
+    #[Test]
+    public function test_enabled_with_bypass_returns_no_errors(): void
+    {
+        $configuration = new NASAStanConfiguration(
+            enabledRules: ['rule_7'],
+            exceptRules: ['rule_7']
+        );
+
+        $this->rule = new CheckReturnValueRule($configuration);
+
+        $this->analyse([__DIR__.'/../Examples/Rule_7/ReturnValueUsage.php'], []);
     }
 
     protected function getRule(): Rule

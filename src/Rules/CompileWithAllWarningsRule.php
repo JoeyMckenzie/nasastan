@@ -8,6 +8,7 @@ use NASAStan\NASAStanConfiguration;
 use NASAStan\NASAStanException;
 use NASAStan\NASAStanRule;
 use NASAStan\Rules\Concerns\HasNodeClassType;
+use NASAStan\Rules\Concerns\HasRuleEnablement;
 use Override;
 use PhpParser\Node;
 use PhpParser\Node\Expr\ErrorSuppress;
@@ -26,17 +27,7 @@ use PHPStan\ShouldNotHappenException;
  */
 final class CompileWithAllWarningsRule implements NASAStanRule
 {
-    use HasNodeClassType;
-
-    /**
-     * @var string[]
-     */
-    private array $disallowedErrorSuppressingFunctions;
-
-    /**
-     * @var array<array-key, int>
-     */
-    private array $requiredDeclareDirectives;
+    use HasNodeClassType, HasRuleEnablement;
 
     /**
      * @var array<array-key, bool>
@@ -45,10 +36,10 @@ final class CompileWithAllWarningsRule implements NASAStanRule
 
     private ?string $currentFile = null;
 
-    public function __construct(NASAStanConfiguration $configuration)
+    public function __construct(
+        private readonly NASAStanConfiguration $configuration)
     {
-        $this->disallowedErrorSuppressingFunctions = $configuration->disallowedErrorSuppressingFunctions;
-        $this->requiredDeclareDirectives = $configuration->requiredDeclareDirectives;
+        //
     }
 
     /**
@@ -57,6 +48,10 @@ final class CompileWithAllWarningsRule implements NASAStanRule
     #[Override]
     public function processNode(Node $node, Scope $scope): array
     {
+        if (! $this->enabled('rule_10')) {
+            return [];
+        }
+
         $errors = [];
         $filename = $scope->getFile();
 
@@ -66,7 +61,7 @@ final class CompileWithAllWarningsRule implements NASAStanRule
             $this->fileDirectivesFound = [];
 
             // We'll keep track of the file directives assuming each of them is missing
-            foreach (array_keys($this->requiredDeclareDirectives) as $directive) {
+            foreach (array_keys($this->configuration->requiredDeclareDirectives) as $directive) {
                 $this->fileDirectivesFound[$directive] = false;
             }
         }
@@ -85,7 +80,7 @@ final class CompileWithAllWarningsRule implements NASAStanRule
         // Rule 2: Check for error suppression functions (error_reporting, etc.)
         if ($node instanceof FuncCall && $node->name instanceof Name) {
             $functionName = $node->name->toString();
-            if (in_array($functionName, $this->disallowedErrorSuppressingFunctions, true)) {
+            if (in_array($functionName, $this->configuration->disallowedErrorSuppressingFunctions, true)) {
                 try {
                     $errors[] = RuleErrorBuilder::message(
                         sprintf('NASA Power of Ten Rule #10: Error suppressing function "%s" is not allowed.', $functionName)
@@ -102,11 +97,11 @@ final class CompileWithAllWarningsRule implements NASAStanRule
             foreach ($node->declares as $declare) {
                 $directiveName = $declare->key->name;
 
-                if (array_key_exists($directiveName, $this->requiredDeclareDirectives)) {
+                if (array_key_exists($directiveName, $this->configuration->requiredDeclareDirectives)) {
                     $this->fileDirectivesFound[$directiveName] = true;
 
                     // Check if there's a specific required value for this directive
-                    $expectedValue = $this->requiredDeclareDirectives[$directiveName];
+                    $expectedValue = $this->configuration->requiredDeclareDirectives[$directiveName];
 
                     if ($declare->value instanceof Node\Scalar\Int_) {
                         /** @var Node\Scalar\Int_ $value */
@@ -132,7 +127,7 @@ final class CompileWithAllWarningsRule implements NASAStanRule
 
         // Check for missing directives at the file level by examining the first namespace declaration or the end of the file
         if ($node instanceof Namespace_ || $scope->isInClass()) {
-            foreach (array_keys($this->requiredDeclareDirectives) as $directive) {
+            foreach (array_keys($this->configuration->requiredDeclareDirectives) as $directive) {
                 if (! $this->fileDirectivesFound[$directive]) {
                     try {
                         $errors[] = RuleErrorBuilder::message(

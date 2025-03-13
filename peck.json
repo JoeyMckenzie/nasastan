@@ -12,7 +12,8 @@
             "func",
             "expr",
             "dereference",
-            "dereferences"
+            "dereferences",
+            "enablement"
         ]
     }
 }

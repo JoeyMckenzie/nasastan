@@ -7,6 +7,7 @@ namespace NASAStan\Rules;
 use NASAStan\NASAStanConfiguration;
 use NASAStan\NASAStanException;
 use NASAStan\NASAStanRule;
+use NASAStan\Rules\Concerns\HasRuleEnablement;
 use Override;
 use PhpParser\Node;
 use PhpParser\Node\Expr\FuncCall;
@@ -25,14 +26,12 @@ use PHPStan\Type\MixedType;
  */
 final readonly class CheckReturnValueRule implements NASAStanRule
 {
-    /**
-     * @var string[]
-     */
-    private array $ignoredFunctions;
+    use HasRuleEnablement;
 
-    public function __construct(NASAStanConfiguration $configuration)
-    {
-        $this->ignoredFunctions = $configuration->ignoreReturnValueForFunctions;
+    public function __construct(
+        private NASAStanConfiguration $configuration
+    ) {
+        //
     }
 
     public function getNodeType(): string
@@ -46,6 +45,10 @@ final readonly class CheckReturnValueRule implements NASAStanRule
     #[Override]
     public function processNode(Node $node, Scope $scope): array
     {
+        if (! $this->enabled('rule_7')) {
+            return [];
+        }
+
         $expr = $node->expr;
 
         // We only need to check function/method calls, skip lambdas and the like for now
@@ -90,11 +93,13 @@ final readonly class CheckReturnValueRule implements NASAStanRule
         }
     }
 
+    #[Override]
     public function getRuleName(): string
     {
-        return 'NASA Power of Ten Rule #6';
+        return 'NASA Power of Ten Rule #7';
     }
 
+    #[Override]
     public function getRuleDescriptor(): string
     {
         return 'Check the return value of all non-void functions, or cast to void to indicate the return value is useless.';
@@ -133,7 +138,7 @@ final readonly class CheckReturnValueRule implements NASAStanRule
 
         $functionName = $funcCall->name->toString();
 
-        return in_array($functionName, $this->ignoredFunctions, true);
+        return in_array($functionName, $this->configuration->ignoreReturnValueForFunctions, true);
     }
 
     /**

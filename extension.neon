@@ -1,5 +1,18 @@
 parameters:
     nasastan:
+        # Rule enablement
+        enabledRules:
+            - rule_1
+            - rule_2
+            - rule_3
+            - rule_4
+            - rule_5
+            - rule_6
+            - rule_7
+            - rule_9
+            - rule_10
+        exceptRules: []
+
         # Rule 2: Fixed upper bounds on loops
         maxAllowedIterations: 1000
         functionSizeLimit: 60
@@ -83,6 +96,8 @@ parameters:
 
 parametersSchema:
     nasastan: structure([
+        enabledRules: arrayOf(string())
+        exceptRules: arrayOf(string())
         maxAllowedIterations: int()
         functionSizeLimit: int()
         allowedInitMethods: arrayOf(string())
@@ -108,6 +123,8 @@ services:
     -
         class: NASAStan\NASAStanConfiguration
         arguments:
+            enabledRules: %nasastan.enabledRules%
+            exceptRules: %nasastan.exceptRules%
             maxAllowedIterations: %nasastan.maxAllowedIterations%
             allowedInitMethods: %nasastan.allowedInitMethods%
             resourceAllocationFunctions: %nasastan.resourceAllocationFunctions%

@@ -10,6 +10,8 @@ namespace NASAStan;
 final class NASAStanConfiguration
 {
     /**
+     * @param  string[]  $enabledRules
+     * @param  string[]  $exceptRules
      * @param  string[]  $allowedInitMethods
      * @param  string[]  $resourceAllocationFunctions
      * @param  string[]  $assertionFunctions
@@ -21,6 +23,9 @@ final class NASAStanConfiguration
      * @param  array<array-key, int>  $requiredDeclareDirectives
      */
     public function __construct(
+        public array $enabledRules = ['rule_1', 'rule_2', 'rule_3', 'rule_4', 'rule_5', 'rule_6', 'rule_7', 'rule_9', 'rule_10'],
+        public array $exceptRules = [],
+
         // Rule 2: Fixed upper bounds on loops
         public int $maxAllowedIterations = 1000,
 

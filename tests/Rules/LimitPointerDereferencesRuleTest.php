@@ -113,6 +113,31 @@ final class LimitPointerDereferencesRuleTest extends NASAStanRuleTestCase
         Assert::assertEquals(Node::class, $this->rule->getNodeType());
     }
 
+    #[Test]
+    public function test_not_enabled_returns_no_errors(): void
+    {
+        $configuration = new NASAStanConfiguration(
+            enabledRules: ['rule_1']
+        );
+
+        $this->rule = new LimitPointerDereferencesRule($configuration);
+
+        $this->analyse([__DIR__.'/../Examples/Rule_9/PointerDereferencing.php'], []);
+    }
+
+    #[Test]
+    public function test_enabled_with_bypass_returns_no_errors(): void
+    {
+        $configuration = new NASAStanConfiguration(
+            enabledRules: ['rule_9'],
+            exceptRules: ['rule_9']
+        );
+
+        $this->rule = new LimitPointerDereferencesRule($configuration);
+
+        $this->analyse([__DIR__.'/../Examples/Rule_9/PointerDereferencing.php'], []);
+    }
+
     protected function getRule(): Rule
     {
         return $this->rule;

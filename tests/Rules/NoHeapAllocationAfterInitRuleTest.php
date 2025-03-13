@@ -19,7 +19,7 @@ use Tests\NASAStanRuleTestCase;
 #[CoversClass(NoHeapAllocationAfterInitRule::class)]
 final class NoHeapAllocationAfterInitRuleTest extends NASAStanRuleTestCase
 {
-    private readonly NoHeapAllocationAfterInitRule $rule;
+    private NoHeapAllocationAfterInitRule $rule;
 
     protected function setUp(): void
     {
@@ -70,6 +70,31 @@ final class NoHeapAllocationAfterInitRuleTest extends NASAStanRuleTestCase
     public function test_node_type(): void
     {
         Assert::assertEquals(Node::class, $this->rule->getNodeType());
+    }
+
+    #[Test]
+    public function test_not_enabled_returns_no_errors(): void
+    {
+        $configuration = new NASAStanConfiguration(
+            enabledRules: ['rule_1']
+        );
+
+        $this->rule = new NoHeapAllocationAfterInitRule($configuration);
+
+        $this->analyse([__DIR__.'/../Examples/Rule_3/HeapAllocationAfterInitMethods.php'], []);
+    }
+
+    #[Test]
+    public function test_enabled_with_bypass_returns_no_errors(): void
+    {
+        $configuration = new NASAStanConfiguration(
+            enabledRules: ['rule_3'],
+            exceptRules: ['rule_3']
+        );
+
+        $this->rule = new NoHeapAllocationAfterInitRule($configuration);
+
+        $this->analyse([__DIR__.'/../Examples/Rule_3/HeapAllocationAfterInitMethods.php'], []);
     }
 
     protected function getRule(): Rule

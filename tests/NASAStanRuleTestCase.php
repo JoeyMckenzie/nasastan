@@ -23,4 +23,10 @@ abstract class NASAStanRuleTestCase extends RuleTestCase
 
     #[Test]
     abstract public function test_node_type(): void;
+
+    #[Test]
+    abstract public function test_not_enabled_returns_no_errors(): void;
+
+    #[Test]
+    abstract public function test_enabled_with_bypass_returns_no_errors(): void;
 }

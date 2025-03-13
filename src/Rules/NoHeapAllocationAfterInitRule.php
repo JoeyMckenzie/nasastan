@@ -8,6 +8,7 @@ use NASAStan\NASAStanConfiguration;
 use NASAStan\NASAStanException;
 use NASAStan\NASAStanRule;
 use NASAStan\Rules\Concerns\HasNodeClassType;
+use NASAStan\Rules\Concerns\HasRuleEnablement;
 use Override;
 use PhpParser\Node;
 use PhpParser\Node\Expr\Array_;
@@ -26,24 +27,14 @@ use PHPStan\Type\ObjectType;
  *
  * @implements NASAStanRule<Node>
  */
-final class NoHeapAllocationAfterInitRule implements NASAStanRule
+final readonly class NoHeapAllocationAfterInitRule implements NASAStanRule
 {
-    use HasNodeClassType;
+    use HasNodeClassType, HasRuleEnablement;
 
-    /**
-     * @var string[]
-     */
-    private array $resourceAllocationFunctions;
-
-    /**
-     * @var string[]
-     */
-    private array $allowedInitMethods;
-
-    public function __construct(NASAStanConfiguration $configuration)
+    public function __construct(
+        private NASAStanConfiguration $configuration)
     {
-        $this->allowedInitMethods = $configuration->allowedInitMethods;
-        $this->resourceAllocationFunctions = $configuration->resourceAllocationFunctions;
+        //
     }
 
     /**
@@ -53,6 +44,10 @@ final class NoHeapAllocationAfterInitRule implements NASAStanRule
     #[Override]
     public function processNode(Node $node, Scope $scope): array
     {
+        if (! $this->enabled('rule_3')) {
+            return [];
+        }
+
         // If we're in an initialization method, bail out
         if ($this->isApprovedInitializationMethod($scope)) {
             return [];
@@ -87,7 +82,7 @@ final class NoHeapAllocationAfterInitRule implements NASAStanRule
         // Check for resource allocation functions
         if ($node instanceof FuncCall && $node->name instanceof Name) {
             $functionName = $node->name->toString();
-            if (in_array($functionName, $this->resourceAllocationFunctions, true)) {
+            if (in_array($functionName, $this->configuration->resourceAllocationFunctions, true)) {
                 try {
                     return [
                         RuleErrorBuilder::message(
@@ -146,7 +141,7 @@ final class NoHeapAllocationAfterInitRule implements NASAStanRule
 
         $functionName = $function->getName();
 
-        return in_array($functionName, $this->allowedInitMethods, true);
+        return in_array($functionName, $this->configuration->allowedInitMethods, true);
     }
 
     /**

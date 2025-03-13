@@ -8,6 +8,7 @@ use NASAStan\NASAStanConfiguration;
 use NASAStan\NASAStanException;
 use NASAStan\NASAStanRule;
 use NASAStan\Rules\Concerns\HasNodeClassType;
+use NASAStan\Rules\Concerns\HasRuleEnablement;
 use Override;
 use PhpParser\Node;
 use PhpParser\Node\Stmt\ClassMethod;
@@ -21,21 +22,14 @@ use PHPStan\ShouldNotHappenException;
  *
  * @implements NASAStanRule<Node>
  */
-final class RestrictFunctionLengthRule implements NASAStanRule
+final readonly class RestrictFunctionLengthRule implements NASAStanRule
 {
-    use HasNodeClassType;
+    use HasNodeClassType, HasRuleEnablement;
 
-    private int $maxLines;
-
-    private bool $includeComments;
-
-    private bool $includeBlankLines;
-
-    public function __construct(NASAStanConfiguration $configuration)
+    public function __construct(
+        private NASAStanConfiguration $configuration)
     {
-        $this->maxLines = $configuration->maxLines;
-        $this->includeBlankLines = $configuration->includeBlankLines;
-        $this->includeComments = $configuration->includeComments;
+        //
     }
 
     public function getRuleDescriptor(): string
@@ -49,6 +43,10 @@ final class RestrictFunctionLengthRule implements NASAStanRule
     #[Override]
     public function processNode(Node $node, Scope $scope): array
     {
+        if (! $this->enabled('rule_4')) {
+            return [];
+        }
+
         // Only need to consider class methods and functions
         if (! $node instanceof ClassMethod && ! $node instanceof Function_) {
             return [];
@@ -66,7 +64,7 @@ final class RestrictFunctionLengthRule implements NASAStanRule
         $totalLines = $endLine - $startLine + 1;
 
         // If we need to exclude comments or blank lines, we'll need to analyze the file content
-        if (! $this->includeComments || ! $this->includeBlankLines) {
+        if (! $this->configuration->includeComments || ! $this->configuration->includeBlankLines) {
             $fileContent = $this->getFileContent($scope);
 
             if ($fileContent !== null) {
@@ -78,11 +76,11 @@ final class RestrictFunctionLengthRule implements NASAStanRule
 
                 $contentLines = count($functionLines);
 
-                if (! $this->includeComments) {
+                if (! $this->configuration->includeComments) {
                     $contentLines -= $this->countCommentLines($functionLines);
                 }
 
-                if (! $this->includeBlankLines) {
+                if (! $this->configuration->includeBlankLines) {
                     $contentLines -= $this->countBlankLines($functionLines);
                 }
 
@@ -90,7 +88,7 @@ final class RestrictFunctionLengthRule implements NASAStanRule
             }
         }
 
-        if ($totalLines > $this->maxLines) {
+        if ($totalLines > $this->configuration->maxLines) {
             $nodeType = $node instanceof ClassMethod ? 'Method' : 'Function';
 
             try {
@@ -101,7 +99,7 @@ final class RestrictFunctionLengthRule implements NASAStanRule
                             $nodeType,
                             $functionName,
                             $totalLines,
-                            $this->maxLines
+                            $this->configuration->maxLines
                         )
                     )->build(),
                 ];
