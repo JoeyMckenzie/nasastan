@@ -79,7 +79,7 @@ final class MinimumAssertionsPerFunction implements Stringable
     }
 
     /**
-     * This method uses assertion methods - should pass.
+     * This method uses test assertion methods - should pass.
      */
     public function methodWithAssertionMethods(array $data): array
     {
