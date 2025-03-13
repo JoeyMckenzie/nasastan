@@ -23,10 +23,16 @@ rules in your PHP code.
 - [Usage](#usage)
 - [Power of Ten Rules](#original-nasa-power-of-ten-rules)
 - [Rules]()
-    - [1. Avoid complex flow constructs](#avoid-complex-flow-constructs-such-as-goto-and-recursion)
-    - [2. All loops must have fixed bounds](#all-loops-must-have-fixed-bounds-this-prevents-runaway-code)
-    - [3. Avoid heap memory allocation after initialization](#avoid-heap-memory-allocation-after-initialization)
-    - [4. Restrict functions to a single printed page](#restrict-functions-to-a-single-printed-page)
+    - [1. Avoid complex flow constructs](#rule-1)
+    - [2. All loops must have fixed bounds](#rule-2)
+    - [3. Avoid heap memory allocation after initialization](#rule-3)
+    - [4. Restrict functions to a single printed page](#rule-4)
+    - [5. Use a minimum of two runtime assertions per function](#rule-5)
+    - [6. Restrict the scope of data to the smallest possible](#rule-6)
+    - [7. Check the return value of all non-void functions](#rule-7)
+    - [8. Use the preprocessor only for header files and simple macros](#rule-8)
+    - [9. Limit pointer use to a single dereference](#rule-9)
+    - [10. Compile with all possible warnings active](#rule-10)
 - [References](#references)
 - [Contributing](#references)
 
@@ -453,6 +459,359 @@ function globalFunctionWithEnoughAssertions(array $items): int
 function globalFunctionWithNotEnoughAssertions(array $items): int
 {
     return count($items);
+}
+```
+
+### Rule #6
+
+#### Restrict the scope of data to the smallest possible
+
+This rule limits the number of properties on classes and their visibility. Properties may be whitelisted within
+configuration telling NASAStan to ignore reporting on these instances.
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace Examples;
+
+/**
+ * Trait should be analyzed
+ */
+trait SomeTrait
+{
+    public string $id; // Allowed
+
+    public string $nonAllowedPublic; // Not allowed
+
+    private string $private;
+}
+
+/**
+ * Interface should be skipped
+ */
+interface SomeInterface
+{
+    public function doSomething(): void;
+}
+
+/**
+ * This class has too many properties (exceeds maxClassProperties)
+ */
+final readonly class TooManyProperties
+{
+    private int $prop1;
+
+    private int $prop2;
+
+    private int $prop3;
+
+    private int $prop4;
+
+    private int $prop5;
+
+    private int $prop6;
+}
+
+/**
+ * Class with too many promoted properties from the constructor
+ */
+final readonly class TooManyPromotedPropertiesClass
+{
+    public function __construct(
+        private string $prop1,
+        private string $prop2,
+        private string $prop3,
+        private string $prop4,
+        private string $prop5,
+        private string $prop6,
+    ) {
+        // This is fine, exactly at the limit of 5 properties
+    }
+}
+
+/**
+ * Class with too many promoted properties from the constructor
+ */
+final readonly class MixOfTooManyPropertiesClass
+{
+    private string $prop1;
+
+    private string $prop2;
+
+    private string $prop3;
+
+    public function __construct(
+        private string $prop4,
+        private string $prop5,
+        private string $prop6,
+    ) {
+        // This is fine, exactly at the limit of 5 properties
+    }
+}
+
+/**
+ * This class has public properties, some allowed and some not allowed
+ */
+final class WhitelistedProperties
+{
+    public int $id; // This is allowed
+
+    public string $name; // This is allowed
+
+    public string $status; // This is not allowed
+
+    public string $description; // This is not allowed
+
+    public string $created_at; // This is allowed because of the wildcard pattern 'created_*'
+
+    public string $updated_at; // This is allowed because of the wildcard pattern 'updated_*'
+
+    public function getStatus(): string
+    {
+        return $this->status;
+    }
+}
+
+/**
+ * This class is fine - within the property limit and no disallowed public properties
+ */
+final readonly class ValidExample
+{
+    public function __construct(private string $name) {}
+
+    public function getName(): string
+    {
+        return $this->name;
+    }
+}
+
+/**
+ * This class is within property limits and has only allowed public properties
+ */
+final class AllowedPublicPropertiesExample
+{
+    public int $id = 1;
+
+    public string $name = 'Example';
+
+    public string $created_date = '2023-01-01';
+}
+```
+
+### Rule #7
+
+#### Check the return value of all non-void functions, or cast to void to indicate the return value is useless
+
+This rule enforces all method and function values to be used. Any unused values will be reported by NASAStan.
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace Examples;
+
+final class ReturnValueUsage
+{
+    public function correctUsage(): void
+    {
+        // Return value is used
+        $result = $this->getNonVoidValue();
+        $this->useValue($result);
+
+        // Return value is explicitly ignored with annotation
+        /** @ignoreReturnValue */
+        $this->getNonVoidValue();
+
+        // Return value from void function is not checked (correctly)
+        $this->getVoidValue();
+
+        // Ignored functions don't need to be checked
+        printf('This is a test');
+
+        // Alternative annotation style
+        /** @void */
+        $this->getNonVoidValue();
+
+        /** @return-value-ignored */
+        $this->getArrayValue();
+    }
+
+    public function incorrectUsage(): void
+    {
+        // Return value is not used (should trigger error)
+        $this->getNonVoidValue();
+
+        // This should trigger an error
+        $this->getArrayValue();
+
+        // Static method call with return value not used
+        self::getStaticValue();
+    }
+
+    private static function getStaticValue(): int
+    {
+        return 42;
+    }
+
+    private function getNonVoidValue(): string
+    {
+        return 'some value';
+    }
+
+    /**
+     * @param  mixed  $value
+     */
+    private function useValue($value): void
+    {
+        // Use the value
+    }
+
+    private function getVoidValue(): void
+    {
+        // Do something
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function getArrayValue(): array
+    {
+        return ['key' => 'value'];
+    }
+}
+```
+
+### Rule #8
+
+#### Use the preprocessor only for header files and simple macros
+
+This rule does not apply to PHP and has been deliberately ignored. PHP does not use preprocessors for header files nor
+allows for the use of traditional macros.
+
+### Rule #9
+
+#### Limit pointer use to a single dereference, and do not use function pointers
+
+This rule limits the number of times functions or properties may be derefenced (or called) within code. The amount of
+dereferences is configurable.
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace Examples;
+
+use stdClass;
+
+final class PointerDereferencing
+{
+    public function methodChaining(): void
+    {
+        $foo = new stdClass();
+
+        // Violation: Multiple levels of method chaining
+        $result = $foo->getService()->callMethod();
+
+        // Allowed: Single level of method call
+        $service = $foo->getService();
+        $result = $service->callMethod();
+
+        // Violation: Multiple levels of property access
+        $value = $foo->property->nestedProperty;
+
+        // Allowed: Single level of property access
+        $property = $foo->property;
+        $value = $property->nestedProperty;
+
+        // Violation: Array access on property
+        $item = $foo->items['key'];
+
+        // Allowed: Array access on variable
+        $items = $foo->items;
+        $item = $items['key'];
+
+        // Violation: Variable function (function pointer)
+        $callback = 'someFunction';
+        $result = $callback();
+
+        // Violation: Closure (function pointer)
+        $closure = function () {
+            return 'result';
+        };
+
+        // Violation: Callable array
+        $callable = [$this, 'methodName'];
+        call_user_func($callable);
+
+        // Violation: Method call on static call
+        $result = SomeClass::getInstance()->doSomething();
+
+        // Allowed: Storing static call result first
+        $instance = SomeClass::getInstance();
+        $result = $instance->doSomething();
+    }
+}
+
+final class SomeClass
+{
+    public static function getInstance(): self
+    {
+        return new self();
+    }
+
+    public function doSomething(): string
+    {
+        return 'something';
+    }
+}
+```
+
+### Rule #10
+
+#### Compile with all possible warnings active; all warnings should then be addressed before release of the software
+
+This rules bans the use of `@` error suppression symbols and enforces the use of strict type declarations.
+
+```php
+<?php
+
+// Missing strict_types declaration should be caught
+
+namespace Examples;
+
+use RuntimeException;
+
+final class WarningSuppression
+{
+    public function suppressWarningsWithOperator(): void
+    {
+        // This should trigger an error for using the @ operator
+        @file_get_contents('non_existent_file.txt');
+    }
+
+    public function suppressWarningsWithFunctions(): void
+    {
+        // These should trigger errors for using error suppression functions
+        error_reporting(0);
+        ini_set('display_errors', '0');
+        set_error_handler(function () {
+            return true;
+        });
+    }
+
+    public function properFunction(): void
+    {
+        // This should be fine
+        $content = file_get_contents('some_file.txt');
+        if ($content === false) {
+            // Handle error properly
+            throw new RuntimeException('Failed to read file');
+        }
+    }
 }
 ```
 

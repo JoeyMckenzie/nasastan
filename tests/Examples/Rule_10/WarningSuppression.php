@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 // Missing strict_types declaration should be caught
 
 namespace Tests\Examples\Rule_10;
@@ -34,5 +36,3 @@ final class WarningSuppression
         }
     }
 }
-
-// This file with namespace use but missing strict_types should be caught
