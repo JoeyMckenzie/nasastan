@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 // Missing strict_types declaration should be caught
 
 namespace Tests\Examples\Rule_10;
