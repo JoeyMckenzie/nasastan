@@ -16,11 +16,24 @@ rules in your PHP code.
 
 > ⚠️ This is solely for self-learning and under active development. You're on your own if you it for the time being.
 
+## Table of Contents
+
+- [Motivation](#why-should-i-use-this-extension)
+- [Getting started](#getting-started)
+- [Usage](#usage)
+- [Power of Ten Rules](#original-nasa-power-of-ten-rules)
+- [Rules]()
+    - [1. Avoid complex flow constructs](#avoid-complex-flow-constructs-such-as-goto-and-recursion)
+    - [2. All loops must have fixed bounds](#all-loops-must-have-fixed-bounds-this-prevents-runaway-code)
+    - TODO
+- [References](#references)
+- [Contributing](#references)
+
 ## Why should I use this extension?
 
 Great question. I'm still trying to figure out an answer to that myself.
 
-## Installation
+## Getting started
 
 To get started, install the package with composer:
 
