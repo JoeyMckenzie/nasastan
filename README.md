@@ -1,6 +1,6 @@
 <div align="center" style="padding-top: 2rem;">
-    <img src="art/astronaut.png" height="400" width="400" alt="logo"/>
-    <div style="display: inline-block; margin-top: 4rem">
+    <img src="art/cropped.png" height="178" width="432" alt="logo"/>
+    <div style="display: inline-block; margin-top: 2rem">
         <img src="https://img.shields.io/packagist/v/joeymckenzie/nasastan.svg?style=flat-square" alt="packgist downloads" />
         <img src="https://img.shields.io/github/actions/workflow/status/joeymckenzie/nasastan/run-ci.yml?branch=main&label=ci&style=flat-square" alt="ci" />
         <img src="https://img.shields.io/github/actions/workflow/status/joeymckenzie/nasastan/fix-php-code-style-issues.yml?branch=main&label=code%20style&style=flat-square" alt="packgist downloads" />
