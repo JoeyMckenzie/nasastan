@@ -91,8 +91,7 @@ final readonly class FixedUpperBoundOnLoopsRule implements NASAStanRule
                 RuleErrorBuilder::message(sprintf(
                     '%s: For loop must have a condition and increment to ensure fixed bounds.',
                     $this->getRuleName()
-                ))
-                    ->build(),
+                ))->build(),
             ];
         }
 
@@ -106,8 +105,7 @@ final readonly class FixedUpperBoundOnLoopsRule implements NASAStanRule
             RuleErrorBuilder::message(sprintf(
                 '%s: For loop must have a fixed upper bound to prevent runaway code.',
                 $this->getRuleName()
-            ))
-                ->build(),
+            ))->build(),
         ];
     }
 
@@ -153,8 +151,7 @@ final readonly class FixedUpperBoundOnLoopsRule implements NASAStanRule
                 RuleErrorBuilder::message(sprintf(
                     '%s: While/do-while loop with condition "true" has no upper bound.',
                     $this->getRuleName()
-                ))
-                    ->build(),
+                ))->build(),
             ];
         }
 
@@ -167,8 +164,7 @@ final readonly class FixedUpperBoundOnLoopsRule implements NASAStanRule
             RuleErrorBuilder::message(sprintf(
                 '%s: While/do-while loop must have a verifiable fixed upper bound to prevent runaway code.',
                 $this->getRuleName()
-            ))
-                ->build(),
+            ))->build(),
         ];
     }
 
@@ -236,8 +232,7 @@ final readonly class FixedUpperBoundOnLoopsRule implements NASAStanRule
             RuleErrorBuilder::message(sprintf(
                 '%s: Foreach loop must iterate over a countable collection with a verifiable size bound.',
                 $this->getRuleName()
-            ))
-                ->build(),
+            ))->build(),
         ];
     }
 }
