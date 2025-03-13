@@ -14,7 +14,8 @@ PHPStan extension that enforces
 NASA's [Power of Ten](https://en.wikipedia.org/wiki/The_Power_of_10:_Rules_for_Developing_Safety-Critical_Code)
 rules in your PHP code.
 
-> ⚠️ This is solely for self-learning and under active development. You're on your own if you it for the time being.
+> ⚠️ This extension is under active development! While the rules themselves have been implemented, there may be breaking
+> changes between minor version for the time being.
 
 ## Table of Contents
 
