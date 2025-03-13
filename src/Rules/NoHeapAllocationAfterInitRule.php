@@ -30,10 +30,14 @@ final class NoHeapAllocationAfterInitRule implements NASAStanRule
 {
     use HasNodeClassType;
 
-    /** @var array<string> */
+    /**
+     * @var string[]
+     */
     private array $resourceAllocationFunctions;
 
-    /** @var array<string> */
+    /**
+     * @var string[]
+     */
     private array $allowedInitMethods;
 
     public function __construct(NASAStanConfiguration $configuration)

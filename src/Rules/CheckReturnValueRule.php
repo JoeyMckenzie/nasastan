@@ -25,7 +25,9 @@ use PHPStan\Type\MixedType;
  */
 final readonly class CheckReturnValueRule implements NASAStanRule
 {
-    /** @var string[] */
+    /**
+     * @var string[]
+     */
     private array $ignoredFunctions;
 
     public function __construct(NASAStanConfiguration $configuration)

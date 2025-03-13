@@ -62,13 +62,13 @@ Disallows the use of `goto` statements and recursive functions. The following co
 rule and reported on by NASAStan:
 
 ```php
-// ❌ Bad
+
 function baz(): void
 {
     start:
     $foo = 'bar';
 
-    goto start;  // phpstan: NASA Power of Ten Rule #1: Goto statements are not allowed.
+    goto start;  // ❌ phpstan: NASA Power of Ten Rule #1: Goto statements are not allowed.
 }
 
 function factorial(int $n): int
@@ -77,7 +77,100 @@ function factorial(int $n): int
         return 1;
     }
 
-    return $n * factorial($n - 1); // phpstan: NASA Power of Ten Rule #1: Recursive method calls are not allowed. 
+    return $n * factorial($n - 1); // ❌ phpstan: NASA Power of Ten Rule #1: Recursive method calls are not allowed.
+}
+```
+
+### Rule #2
+
+#### All loops must have fixed bounds. This prevents runaway code.
+
+Enforces all loops within PHP code to have a fixed upper bound. Things like `while(true)`, `do-while(true)`, `Generator`
+types, and `array` types greater than the configurable upper-bound will cause NASAStan to flag for errors.
+
+Unbound `while` loops
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace Examples;
+
+final class NoFixedUpperBound
+{
+    public function noFixedBound(): void
+    {
+        while (true) { // ❌ phpstan: NASA Power of Ten Rule #2: While/ do-while loop with condition "true" has no upper bound.
+            echo 'I had run for three years, two months, 14 days, and 16 hours...';
+        }
+    }
+}
+```
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace Examples;
+
+final class DynamicWhileLoop
+{
+    public function whileWithDynamicCondition(): void
+    {
+        $result = $this->fetchNext();
+        while ($result !== null) { // ❌ phpstan: NASA Power of Ten Rule #2: While/ do-while loop must have a verifiable fixed upper bound to prevent runaway code.
+            echo $result;
+            $result = $this->fetchNext();
+        }
+    }
+
+    private function fetchNext(): ?string
+    {
+        static $count = 0;
+
+        if ($count < 10) {
+            $count++;
+
+            return 'Data '.$count;
+        }
+
+        return null;
+    }
+}
+```
+
+With `Generator` types
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace Examples;
+
+use Generator;
+
+final class ForeachWithGenerator
+{
+    public function foreachWithGenerator(): void
+    {
+        $generator = $this->createGenerator();
+        foreach ($generator as $value) { // ❌ phpstan: NASA Power of Ten Rule #2: Foreach loop must iterate over a countable collection with a verifiable size bound.
+            echo $value;
+        }
+    }
+
+    /**
+     * @return Generator<int, string>
+     */
+    private function createGenerator(): Generator
+    {
+        for ($i = 0; $i < 10; $i++) {
+            yield "Item $i";
+        }
+    }
 }
 ```
 
