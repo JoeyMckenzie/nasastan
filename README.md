@@ -25,6 +25,8 @@ rules in your PHP code.
 - [Rules]()
     - [1. Avoid complex flow constructs](#avoid-complex-flow-constructs-such-as-goto-and-recursion)
     - [2. All loops must have fixed bounds](#all-loops-must-have-fixed-bounds-this-prevents-runaway-code)
+    - [3. Avoid heap memory allocation after initialization](#avoid-heap-memory-allocation-after-initialization)
+    - [4. Restrict functions to a single printed page](#restrict-functions-to-a-single-printed-page)
     - TODO
 - [References](#references)
 - [Contributing](#references)
@@ -69,7 +71,7 @@ includes:
 
 ### Rule #1
 
-#### Avoid complex flow constructs, such as goto and recursion.
+#### Avoid complex flow constructs, such as goto and recursion
 
 Disallows the use of `goto` statements and recursive functions. The following code would be in direct violation of this
 rule and reported on by NASAStan:
@@ -96,7 +98,7 @@ function factorial(int $n): int
 
 ### Rule #2
 
-#### All loops must have fixed bounds. This prevents runaway code.
+#### All loops must have fixed bounds. This prevents runaway code
 
 Enforces all loops within PHP code to have a fixed upper bound. Things like `while(true)`, `do-while(true)`, `Generator`
 types, and `array` types greater than the configurable upper-bound will cause NASAStan to flag for errors.
@@ -183,6 +185,151 @@ final class ForeachWithGenerator
         for ($i = 0; $i < 10; $i++) {
             yield "Item $i";
         }
+    }
+}
+```
+
+## Rule #3
+
+#### Avoid heap memory allocation after initialization
+
+Constricts resource allocation to only be allowed within approved initialization methods. Things like `new`ing up
+objects outside of constructors, array allocations, etc. will cause NASAStan to report on this rule.
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace Examples;
+
+use SplDoublyLinkedList;
+use stdClass;
+
+final class DynamicHeapAllocation
+{
+    /**
+     * @var string[]
+     */
+    private array $data = ['a', 'b', 'c']; // ❌ phpstan: NASA Power of Ten Rule #3: Dynamic array creation is not allowed after initialization.
+
+    /**
+     * @var SplDoublyLinkedList<string>
+     */
+    private readonly SplDoublyLinkedList $list;
+
+    // This is fine because it's in a constructor (initialization)
+    public function __construct()
+    {
+        fopen('php://memory', 'r+');
+        $this->list = new SplDoublyLinkedList();
+        $this->list->push('initial value');
+        new stdClass(); // This is allowed in constructor
+    }
+
+    // This is fine because it's in an initialization method
+    public function initialize(): void
+    {
+        $moreData = ['d', 'e', 'f'];
+        $this->data = array_merge($this->data, $moreData);
+    }
+
+    // This will trigger a violation
+    public function doSomething(): void
+    {
+        new stdClass();
+        // Violation: Array creation after initialization
+        $this->list->push('new value'); // Violation: Container method that allocates memory
+
+        fopen('temp.txt', 'w'); // Violation: Resource allocation function
+    }
+
+    // This will also trigger violations
+    public function processData(string $input): string
+    {
+        $result = [1];  // Violation: Non-empty array creation after initialization
+
+        for ($i = 0; $i < mb_strlen($input); $i++) {
+            $result[] = mb_strtoupper($input[$i]); // Modifying array after initialization
+        }
+
+        return implode('', $result);
+    }
+}
+```
+
+### Rule #4
+
+#### Restrict functions to a single printed page
+
+Enforces a strict method length rule within a function or method. Can be adjusted through configuration with a default
+set to 60 lines.
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace Examples;
+
+final class FunctionLengthInvalid
+{
+    /**
+     * Short method will comply with the rule.
+     */
+    public function shortMethod(): string
+    {
+        $result = '';
+
+        for ($i = 0; $i < 5; $i++) {
+            $result .= "Line $i\n";
+        }
+
+        return $result;
+    }
+
+    /**
+     * This method would exceed the maximum length for a test case with a low maxLinesPerFunction setting (e.g. 20 lines).
+     * It contains comments and blank lines that could be excluded from the count based on the rule configuration.
+     */
+    public function longMethod(): array // ❌ phpstan: NASA Power of Ten Rule #4: Method "longMethod" has 34 lines which exceeds the maximum of 20 lines (single printed page).
+    {
+        return [
+            // Adding many lines to exceed the limit
+            'Line 1',
+            'Line 2',
+            'Line 3',
+            // More comments to increase the line count
+            'Line 4',
+            'Line 5',
+            // Blank line below
+            
+            'Line 6',
+            'Line 7',
+            'Line 8',
+            'Line 9',
+            /*
+             * Multi-line comment
+             * to add more lines
+             * to the function
+             */
+            'Line 10',
+            'Line 11',
+            'Line 12',
+            'Line 13',
+            'Line 14',
+            'Line 15',
+            // More and more lines
+            'Line 16',
+            'Line 17',
+            'Line 18',
+            'Line 19',
+            'Line 20',
+            'Line 21',
+            'Line 22',
+            'Line 23',
+            'Line 24',
+        ];
     }
 }
 ```

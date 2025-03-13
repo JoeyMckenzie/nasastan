@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Tests\Examples\Rule_3;
+namespace Examples;
 
 use SplDoublyLinkedList;
 use stdClass;
 
-final class HeapAllocationAfterInitMethods
+final class DynamicHeapAllocation
 {
     /**
      * @var string[]
@@ -25,7 +25,6 @@ final class HeapAllocationAfterInitMethods
         fopen('php://memory', 'r+');
         $this->list = new SplDoublyLinkedList();
         $this->list->push('initial value');
-        new stdClass(); // This is allowed in constructor
     }
 
     // This is fine because it's in an initialization method
@@ -38,7 +37,9 @@ final class HeapAllocationAfterInitMethods
     // This will trigger a violation
     public function doSomething(): void
     {
-        new stdClass();
+        $new = new stdClass();
+        $test = [];
+
         // Violation: Array creation after initialization
         $this->list->push('new value'); // Violation: Container method that allocates memory
 
@@ -48,7 +49,7 @@ final class HeapAllocationAfterInitMethods
     // This will also trigger violations
     public function processData(string $input): string
     {
-        $result = [1];  // Violation: Non-empty array creation after initialization
+        $result = [];  // Violation: Array creation after initialization
 
         for ($i = 0; $i < mb_strlen($input); $i++) {
             $result[] = mb_strtoupper($input[$i]); // Modifying array after initialization

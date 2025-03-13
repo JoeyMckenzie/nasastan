@@ -47,6 +47,10 @@ final class NoHeapAllocationAfterInitRuleTest extends NASAStanRuleTestCase
                 'NASA Power of Ten Rule #3: Resource allocation function "fopen" is not allowed after initialization.',
                 45,
             ],
+            [
+                'NASA Power of Ten Rule #3: Dynamic array creation is not allowed after initialization.',
+                51,
+            ],
         ]);
     }
 

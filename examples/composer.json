@@ -21,6 +21,10 @@
         }
     ],
     "minimum-stability": "dev",
+    "require": {
+        "php": "^8.4",
+        "ext-mbstring": "*"
+    },
     "require-dev": {
         "phpstan/phpstan": "^2.0",
         "phpstan/extension-installer": "^1.4",
