@@ -59,6 +59,183 @@ includes:
   - vendor/joeymckenzie/nasastan/extension.neon
 ```
 
+## Configuring NASAStan
+
+To use NASAStan with its default configuration, add the extension to your `phpstan.neon` file:
+
+```neon
+includes:
+    - vendor/nasastan/phpstan-nasastan/extension.neon
+```
+
+### Customizing rules
+
+You can customize NASAStan's behavior by overriding configuration parameters in your `phpstan.neon` file.
+
+#### Enabling or disabling rules
+
+By default, all NASAStan rules are enabled. To select only specific rules:
+
+```neon
+parameters:
+    nasastan:
+        enabledRules:
+            - rule_3  # No heap allocation after init
+            - rule_4  # Restrict function length
+            - rule_10 # Compile with all warnings active
+```
+
+To exclude specific rules while keeping others enabled:
+
+```neon
+parameters:
+    nasastan:
+        exceptRules:
+            - rule_5  # Minimum number of assertions
+```
+
+### Rule-specific configuration
+
+Each rule has its own customizable parameters. Here are examples for each rule:
+
+#### Rule 2: Fixed upper bounds on loops
+
+```neon
+parameters:
+    nasastan:
+        maxAllowedIterations: 500  # Lower the maximum allowed iterations
+```
+
+#### Rule 3: No heap allocation after initialization
+
+```neon
+parameters:
+    nasastan:
+        allowedInitMethods:
+            - __construct
+            - initialize
+            - setUp  # Add custom initialization methods
+        resourceAllocationFunctions:
+            - fopen
+            - custom_resource_function  # Add your own resource allocation functions
+```
+
+#### Rule 4: Restrict function length
+
+```neon
+parameters:
+    nasastan:
+        maxLinesPerFunction: 30  # Reduce maximum lines per function
+        includeComments: false   # Don't count comments toward the line limit
+```
+
+#### Rule 5: Minimum assertions per function
+
+```neon
+parameters:
+    nasastan:
+        minimumAssertionsRequired: 1  # Reduce required assertions
+        assertionFunctions:
+            - assert
+            - custom_assertion  # Add your own assertion functions
+```
+
+#### Rule 6: Restrict data scope
+
+```neon
+parameters:
+    nasastan:
+        maxClassProperties: 15  # Increase allowed class properties
+        allowedPublicProperties:
+            - id
+            - custom_public_property  # Add custom allowed public properties
+```
+
+#### Rule 7: Check return values
+
+```neon
+parameters:
+    nasastan:
+        ignoreReturnValueForFunctions:
+            - custom_void_function  # Add functions where return values can be ignored
+```
+
+#### Rule 9: Limit dereferences
+
+```neon
+parameters:
+    nasastan:
+        maxAllowedDereferences: 2  # Allow more levels of dereferencing
+```
+
+#### Rule 10: Compile with all warnings active
+
+```neon
+parameters:
+    nasastan:
+        disallowedErrorSuppressingFunctions:
+            - custom_error_suppression  # Add custom error suppression functions
+        requiredDeclareDirectives:
+            strict_types: 1  # Keep strict types required
+```
+
+## Complete configuration example
+
+Here's an example of a complete configuration with customized values:
+
+```neon
+parameters:
+    nasastan:
+        # Rule enablement
+        enabledRules:
+            - rule_1
+            - rule_2
+            - rule_3
+            - rule_4
+            - rule_10
+        exceptRules:
+            - rule_5
+            - rule_6
+            
+        # Rule 2: Fixed upper bounds on loops
+        maxAllowedIterations: 500
+        
+        # Rule 3: No heap allocation after init
+        allowedInitMethods:
+            - __construct
+            - initialize
+            - bootstrap
+        
+        # Rule 4: Restrict function length
+        maxLinesPerFunction: 40
+        includeComments: false
+        includeBlankLines: false
+        
+        # Rule 10: Compile with all warnings active
+        requiredDeclareDirectives:
+            strict_types: 1
+```
+
+## Default Values
+
+If you don't override a configuration parameter, NASAStan will use the following default values:
+
+| Parameter                 | Default Value         |
+|---------------------------|-----------------------|
+| enabledRules              | All rules (1-7, 9-10) |
+| exceptRules               | [] (empty array)      |
+| maxAllowedIterations      | 1000                  |
+| maxLinesPerFunction       | 60                    |
+| includeComments           | true                  |
+| includeBlankLines         | true                  |
+| minimumAssertionsRequired | 2                     |
+| maxClassProperties        | 10                    |
+| maxAllowedDereferences    | 1                     |
+
+For complete details on all available configuration options, refer to the [
+`NASAStanConfiguration.php`](src/NASAStanConfiguration.php) class or the default
+[`extension.neon`](extension.neon) file.
+
 ## Original NASA Power of Ten Rules
 
 1. Avoid complex flow constructs, such as goto and recursion.
