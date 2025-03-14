@@ -15,7 +15,7 @@ NASA's [Power of Ten](https://en.wikipedia.org/wiki/The_Power_of_10:_Rules_for_D
 rules in your PHP code.
 
 > ⚠️ This extension is under active development! While the rules themselves have been implemented, there may be breaking
-> changes between minor version for the time being.
+> changes between minor versions for the time being.
 
 ## Table of Contents
 
@@ -59,6 +59,11 @@ If not, however, include the extension in your PHPStan configuration:
 includes:
   - vendor/joeymckenzie/nasastan/extension.neon
 ```
+
+**Not all rules may be applicable to PHP**. Yes, I'm aware these rules are primarily targeted at C/C++ and some may not
+be nonsensical for PHP's use case. The rules are **opt-in**, allowing for a "choose your own" adventure with rules you
+may
+prefer while disabling ones that you may want in your project.
 
 ## Configuring NASAStan
 
