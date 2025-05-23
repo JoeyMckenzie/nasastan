@@ -35,7 +35,6 @@ rules in your PHP code.
     - [9. Limit pointer use to a single dereference](#rule-9)
     - [10. Compile with all possible warnings active](#rule-10)
 - [References](#references)
-- [Contributing](#references)
 
 ## Why should I use this extension?
 
